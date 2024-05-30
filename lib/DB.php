@@ -2,13 +2,11 @@
 
 namespace Lib;
 
-class DB
-{
-    use \Singleton;
+class DB {
 
     protected $pdo, $table = '', $select = '*', $order = '', $limit_def, $limit, $offset = 0;
 
-    protected function __construct() {
+    public function __construct() {
         try {
             $info = \Config::get('db');
             if (empty($info['option'])) {

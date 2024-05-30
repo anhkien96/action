@@ -64,14 +64,16 @@ class Category extends Base {
     }
 
     public function kien() {
-        $db = \Lib\DB::instance();
+        // $db = \Lib\DB::instance();
+        $db = \Reg::get('db');
         
         // $res = $db->select('c.name, c.level')->table('category c INNER JOIN category c2 ON c.id=c2.id')->get('c.id=:id', ['id' => 3]);
         // $res = $this->repo->select('name, level')->get('id=?', [3]);
         // $res = $db->table('category')->total('id > 200 or id < 10');
         // var_dump($res);
 
-        $validator = new \Lib\Validator();
+        // $validator = new \Lib\Validator();
+        $validator = \Reg::get('validator');
 
         $rules = [
             'name' => ['required', 'text', 'min:6'],
@@ -102,7 +104,8 @@ class Category extends Base {
 
         var_dump(array_merge(['a'=>1, 'b'=>2], ['a'=>3]));
 
-        $req = \Request::instance();
+        // $req = \Request::instance();
+        $req = \Reg::get('request');
         var_dump($req->all());
     }
 }

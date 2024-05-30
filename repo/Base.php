@@ -9,7 +9,8 @@ class Base {
     protected $db, $event;
 
     protected function __construct() {
-        $this->db = \Lib\DB::instance();
+        // $this->db = \Lib\DB::instance();
+        $this->db = \Reg::get('db');
         // $this->event = \Lib\Event::instance();
     }
 

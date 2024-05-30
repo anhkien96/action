@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'debug' => true,
+    'timezone' => 'Asia/Ho_Chi_Minh',
     'middle' => [
         '\Middle\Auth',
         '\Middle\Logger',

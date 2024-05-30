@@ -41,3 +41,5 @@
 // 
 
 // command, migrate, seeding
+
+// checking, log performance, sql query

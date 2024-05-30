@@ -6,12 +6,10 @@ class FileRaw {
 
 class Request {
 
-    use \Singleton;
-
     protected static $files = [], $format_file = true;
     protected $handle = null, $param = [], $is_admin = false, $is_api = false, $control, $action;
 
-    protected function __construct($option = []) {
+    public function __construct($option = []) {
         if (empty($option['handle'])) {
             $this->handle = function($value, $key) {
                 return is_string($value) ? trim($value) : $value;

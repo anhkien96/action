@@ -6,7 +6,7 @@ class Route {
 
     public function __construct() {
         $this->lang_def = \Config::get('app.lang.default');
-        $this->request = \Request::instance();
+        $this->request = \Reg::get('request');
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->setPath($_SERVER['REQUEST_URI']);
     }
@@ -98,9 +98,10 @@ class Route {
     protected function setPath($path) {
         $path = explode('?', $path, 2)[0];
         $path = '/'.implode('/', $this->filterLang(explode('/', ltrim($path, '/'), 3)));
-        if (preg_match('#/page/([0-9]+)/?$#', $path, $match)) {
+        $regex = '#/page/([0-9]+)/?$#';
+        if (preg_match($regex, $path, $match)) {
             $this->request->setParam('page', $match[1]);
-            $path = str_replace($match[0], '/', $path);
+            $path = preg_replace($regex, '/', $path);
         }
         $this->path = $path;
     }
@@ -165,13 +166,15 @@ class Route {
             $cfg404 = \Config::get('app.error.404');
             $control = $cfg404['control']?? '';
             $action = $cfg404['action']?? '';
-            $file = __ROOT.'control/'.$cfg404['control'].'.php';
-            if (is_file($file)) {
-                include($file);
-                $class = '\\Control\\'.$cfg404['control'];
-                $handle = [new $class(), $cfg404['action']];
-                if (is_callable($handle)) {
-                    $handle($this->request);
+            if ($control && $action) {
+                $file = __ROOT.'control/'.$cfg404['control'].'.php';
+                if (is_file($file)) {
+                    include($file);
+                    $class = '\\Control\\'.$cfg404['control'];
+                    $handle = [new $class(), $cfg404['action']];
+                    if (is_callable($handle)) {
+                        $handle($this->request);
+                    }
                 }
             }
         }

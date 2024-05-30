@@ -7,7 +7,8 @@ class Validator {
     protected $validate, $data = [], $errors = [], $type_list = ['int', 'text', 'float', 'file'];
 
     public function __construct() {
-        $this->validate = new \Lib\Validate();
+        // $this->validate = new \Lib\Validate();
+        $this->validate = \Reg::get('validate');
         $this->validate->setValidator($this);
     }
 
