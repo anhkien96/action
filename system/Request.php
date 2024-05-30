@@ -8,8 +8,8 @@ class Request {
 
     use \Singleton;
 
-    protected $handle = null, $param = [];
     protected static $files = [], $format_file = true;
+    protected $handle = null, $param = [], $is_admin = false, $is_api = false, $control, $action;
 
     protected function __construct($option = []) {
         if (empty($option['handle'])) {
@@ -22,6 +22,38 @@ class Request {
 
     public function withHandle($fn) {
         return new static(['handle' => $fn]);
+    }
+
+    public function isAdmin() {
+        return $this->is_admin;
+    }
+
+    public function setIsAdmin($is_admin) {
+        $this->is_admin = $is_admin;
+    }
+
+    public function isApi() {
+        return $this->is_api;
+    }
+
+    public function setIsApi($is_api) {
+        $this->is_api = $is_api;
+    }
+
+    public function getControl() {
+        return $this->control;
+    }
+
+    public function setControl($control) {
+        $this->control = $control;
+    }
+
+    public function getAction() {
+        return $this->action;
+    }
+
+    public function setAction($action) {
+        $this->action = $action;
     }
 
     public function input($key, $default = '', $src = []) {

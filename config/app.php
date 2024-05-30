@@ -1,10 +1,7 @@
 <?php
 
 return [
-    'before_route' => [
-        
-    ],
-    'after_route' => [
+    'middle' => [
         '\Middle\Auth',
         '\Middle\Logger',
     ],

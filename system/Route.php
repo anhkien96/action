@@ -2,7 +2,7 @@
 
 class Route {
 
-    protected $request, $path, $method, $is_api, $is_admin, $lang_def, $map = [], $match_item;
+    protected $request, $path, $method, $lang_def, $map = [], $match_item;
 
     public function __construct() {
         $this->lang_def = \Config::get('app.lang.default');
@@ -44,15 +44,27 @@ class Route {
                 $control = $seg[0];
                 $action = $count > 1 ? str_replace('-', '_', $seg[1]) : 'index';
                 $this->parseParam($seg, $count);
-                $this->loadApp($control, $action);
             }
             else {
-                $this->loadApp('Index', 'index');
+                $control = 'Index';
+                $action = 'index';
             }
         }
         else {
-            $this->loadApp('Index', 'index');
+            $control = 'Index';
+            $action = 'index';
         }
+        $this->request->setControl($control);
+        $this->request->setAction($action);
+
+        $next = [$this, 'loadApp'];
+        foreach (array_reverse(\Config::get('app.middle')) as $middle) {
+            $next = function () use ($middle, $next) {
+                $handle = [new $middle(), 'handle'];
+                $handle($next, $this->request);
+            };
+        }
+        $next();
     }
 
     protected function filterLang($seg = []) {
@@ -67,17 +79,17 @@ class Route {
     protected function fitlerAppType($seg = []) {
         $type = array_shift($seg);
         if ($type == 'api') {
-            $this->is_api = true;
+            $this->request->setIsApi(true);
             if ($seg && $seg[0] == 'admin') {
-                $this->is_admin = true;
+                $this->request->setIsAdmin(true);
                 array_shift($seg);
             }
         }
         elseif ($type == 'admin') {
-            $this->is_admin = true;
+            $this->request->setIsAdmin(true);
         }
         elseif ($seg && $seg[0] == 'admin') {
-            $this->is_admin = true;
+            $this->request->setIsAdmin(true);
             array_shift($seg);
         }
         return $seg;
@@ -116,13 +128,15 @@ class Route {
         }
     }
 
-    protected function loadApp($control, $action) {
+    public function loadApp() {
         $handle = null;
-        $_ = preg_split('/_-/', $control);
-        $file = __ROOT.'control/'.($this->is_admin? 'Admin/': '').implode('/', $_).'.php';
+        $is_admin = $this->request->isAdmin();
+        $_ = preg_split('/_-/', $this->request->getControl());
+        $file = __ROOT.'control/'.($is_admin? 'Admin/': '').implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
-            $class = '\\Control\\'.($this->is_admin? 'Admin\\': '').implode('\\', $_);
+            $class = '\\Control\\'.($is_admin? 'Admin\\': '').implode('\\', $_);
+            $action = $this->request->getAction();
             if ($this->match_item) {
                 $method = $this->match_item['type'];
                 if ($method == 'ANY' || $method == $this->method) {
@@ -137,26 +151,17 @@ class Route {
                 }
             }
         }
-        $next = function() use ($handle) {
-            if ($handle && is_callable($handle)) {
-                $handle($this->request);
-            }
-            else {
-                $this->error404();
-            }
-        };
-        foreach (array_reverse(\Config::get('app.after_route', [])) as $middle) {
-            $next = function() use ($next, $middle) {
-                $handle = [new $middle(), 'handle'];
-                $handle($next);
-            };
+        if ($handle && is_callable($handle)) {
+            $handle($this->request);
         }
-        $next();
+        else {
+            $this->error404();
+        }
     }
 
     protected function error404() {
         header('HTTP/1.1 404 Not Found');
-        if (!$this->is_api) {
+        if (!$this->request->isApi()) {
             $cfg404 = \Config::get('app.error.404');
             $control = $cfg404['control']?? '';
             $action = $cfg404['action']?? '';
