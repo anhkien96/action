@@ -45,6 +45,18 @@ class Reg {
 
     public static function create($key, $param = []) {
         $class = self::$_map[$key];
-        return new $class(...$param);
+        $obj = new $class(...$param);
+        if (empty(self::$_obj[$key])) {
+            self::$_obj[$key] = $obj;
+        }
+        return $obj;
+    }
+
+    public static function db() {
+        if (empty(self::$_obj['db'])) {
+            $class = self::$_map['db'];
+            self::$_obj['db'] = new $class();
+        }
+        return self::$_obj['db'];
     }
 }

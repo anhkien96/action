@@ -4,8 +4,8 @@ return [
     'debug' => true,
     'timezone' => 'Asia/Ho_Chi_Minh',
     'middle' => [
-        '\Middle\Auth',
         '\Middle\Logger',
+        '\Middle\Auth',
     ],
     'error' => [
         '404' => ['control' => 'Error', 'action' => 'error404']

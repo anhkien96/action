@@ -15,7 +15,7 @@ class View {
     }
 
     public function render($name) {
-        include(__ROOT.'view/'.$name.'.php');
+        include(__APP.'view/'.$name.'.php');
     }
 
     public function jsonExcept($except = []) {

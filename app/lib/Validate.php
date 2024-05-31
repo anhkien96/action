@@ -80,12 +80,12 @@ class Validate {
     public function unique($value, $table_field) {
         $_ = explode('.', $table_field, 2);
         // return \Lib\DB::instance()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
-        return \Reg::get('db')->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
+        return \Reg::db()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
     }
 
     protected function _checkExists($value, $table_field) {
         $_ = explode('.', $table_field, 2);
         // return \Lib\DB::instance()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
-        return \Reg::get('db')->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
+        return \Reg::db()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
     }
 }

@@ -133,7 +133,7 @@ class Route {
         $handle = null;
         $is_admin = $this->request->isAdmin();
         $_ = preg_split('/_-/', $this->request->getControl());
-        $file = __ROOT.'control/'.($is_admin? 'Admin/': '').implode('/', $_).'.php';
+        $file = __APP.'control/'.($is_admin? 'Admin/': '').implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
             $class = '\\Control\\'.($is_admin? 'Admin\\': '').implode('\\', $_);
@@ -167,7 +167,7 @@ class Route {
             $control = $cfg404['control']?? '';
             $action = $cfg404['action']?? '';
             if ($control && $action) {
-                $file = __ROOT.'control/'.$cfg404['control'].'.php';
+                $file = __APP.'control/'.$cfg404['control'].'.php';
                 if (is_file($file)) {
                     include($file);
                     $class = '\\Control\\'.$cfg404['control'];

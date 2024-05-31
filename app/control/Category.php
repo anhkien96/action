@@ -65,7 +65,7 @@ class Category extends Base {
 
     public function kien() {
         // $db = \Lib\DB::instance();
-        $db = \Reg::get('db');
+        $db = \Reg::db();
         
         // $res = $db->select('c.name, c.level')->table('category c INNER JOIN category c2 ON c.id=c2.id')->get('c.id=:id', ['id' => 3]);
         // $res = $this->repo->select('name, level')->get('id=?', [3]);

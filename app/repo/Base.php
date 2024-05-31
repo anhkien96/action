@@ -10,7 +10,7 @@ class Base {
 
     protected function __construct() {
         // $this->db = \Lib\DB::instance();
-        $this->db = \Reg::get('db');
+        $this->db = \Reg::db();
         // $this->event = \Lib\Event::instance();
     }
 
