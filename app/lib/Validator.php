@@ -19,6 +19,20 @@ class Validator {
     public function getData() {
         return $this->data;
     }
+
+    protected function getValue($data = [], $key) {
+        $_ = explode('.', $key);
+        $val = &$data;
+        foreach ($_ as $key) {
+            if (isset($val[$key])) {
+                $val = &$val[$key];
+            }
+            else {
+                return '';
+            }
+        }
+        return $val;
+    }
     
     public function check($rules = [], $data = []) {
         $this->setData($data);
@@ -26,8 +40,9 @@ class Validator {
             if (is_string($rule)) {
                 $rule = explode('|', $rule);
             }
-            $value = $this->data[$key]?? '';
-            
+
+            $value = $this->getValue($this->data, $key);
+
             $is_required = false;
             $is_list = false;
             $value_type = '';

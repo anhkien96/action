@@ -15,6 +15,36 @@ class SanPham extends \Control\Admin\Base {
         echo 'Admin San Pham';
         echo '<br/>';
         echo $this->view->kien;
+
+        $user = \Reg::user();
+        var_dump($user);
+    }
+
+    public function kien($request) {
+        var_dump($request->inputList('kien'));
+        // var_dump($request->fileList('kien'));
+
+        // echo '<form method="post" enctype="multipart/form-data">
+        //     <input type="file" name="kien"><br/>
+        //     <input type="file" name="kien[]"><br/>
+        //     <button type="submit">Submit</button>
+        // </form>';
+    }
+
+    public function xacthuc() {
+        $validator = \Reg::get('validator');
+        $rules = [
+            'user.name' => ['required', 'text', 'min:3'],
+        ];
+
+        $data = [
+            'user' => [
+                'name' => 'Kien'
+            ]
+        ];
+
+        $validator->check($rules, $data);
+        var_dump($validator->getErrors());
     }
 }
 
@@ -29,3 +59,9 @@ class SanPham extends \Control\Admin\Base {
 // group system for all
 
 // các loại user như của Odoo
+
+// dynamic role, permission, rel, res_id dùng class
+
+// rule tạo ra để củng cố hoặc pass permission
+
+// có cần Admin View system các block, widget không?

@@ -7,19 +7,19 @@ class FileRaw {
 class Request {
 
     protected static $files = [], $format_file = true;
-    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $control, $action;
+    protected $handle = null, $param = [], $is_admin = false, $is_api = false, $control, $action;
 
     public function __construct($option = []) {
-        if (isset($option['except_trim'])) {
-            foreach ($option['except_trim'] as $key) {
-                $this->except_trim[] = $key;
-            }
+        if (empty($option['handle'])) {
+            $this->handle = function($value, $key) {
+                return is_string($value) ? trim($value) : $value;
+            };
         }
         static::formatFiles();
     }
 
-    public function withContext($option = []) {
-        return new static($option);
+    public function withHandle($fn) {
+        return new static(['handle' => $fn]);
     }
 
     public function isAdmin() {
@@ -76,10 +76,8 @@ class Request {
             }
             return $res;
         }
-        if (is_string($vals) && !in_array($key, $this->except_trim)) {
-            $vals = trim($vals);
-        }
-        return $vals;
+        $handle = $this->handle;
+        return $handle($vals, $key);
     }
 
     public function input($key, $default = '', $src = []) {

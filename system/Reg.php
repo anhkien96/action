@@ -31,8 +31,12 @@ class Reg {
 
     protected static $_map = [], $_obj = [];
 
-    public static function set($key, $value) {
+    public static function map($key, $value) {
         self::$_map[$key] = $value;
+    }
+
+    public static function set($key, $obj) {
+        self::$_obj[$key] = $obj;
     }
 
     public static function get($key, $param = []) {
@@ -58,5 +62,12 @@ class Reg {
             self::$_obj['db'] = new $class();
         }
         return self::$_obj['db'];
+    }
+
+    public static function user() {
+        if (empty(self::$_obj['user'])) {
+            self::$_obj['user'] = new \Model\User\PublicUser();
+        }
+        return self::$_obj['user'];
     }
 }

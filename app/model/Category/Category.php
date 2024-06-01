@@ -2,7 +2,7 @@
 
 namespace Model\Category;
 
-class Detail extends \Model\Base {
+class Category extends \Model\Base {
 
     
 }

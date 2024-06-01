@@ -10,8 +10,8 @@ if ($timezone) {
 	date_default_timezone_set($timezone);
 }
 
-\Reg::set('view', '\View');
-\Reg::set('request', '\Request');
-\Reg::set('db', '\Lib\DB');
-\Reg::set('validator', '\Lib\Validator');
-\Reg::set('validate', '\Lib\Validate');
+\Reg::map('db', '\Lib\DB');
+\Reg::map('request', '\Request');
+\Reg::map('view', '\View');
+\Reg::map('validator', '\Lib\Validator');
+\Reg::map('validate', '\Lib\Validate');
