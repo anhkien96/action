@@ -1,6 +1,6 @@
 <?php
 
-namespace Controller\Page;
+namespace Controller;
 
 class Index extends \Controller\Base {
 

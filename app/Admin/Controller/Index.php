@@ -1,6 +1,6 @@
 <?php
 
-namespace Admin\Controller\Page;
+namespace Admin\Controller;
 
 class Index extends \Admin\Controller\Base {
 

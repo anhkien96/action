@@ -10,7 +10,7 @@ return [
         '\Admin\Middleware\Auth',
     ],
     'error' => [
-        '404' => ['module' => 'Error', 'controller' => 'Http', 'action' => 'error404']
+        '404' => ['controller' => 'Error_Http', 'action' => 'error404']
     ],
     'lang' => [
         'default' => 'vi'

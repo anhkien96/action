@@ -21,14 +21,14 @@ class Index extends \Admin\Controller\Base {
     }
 
     public function kien($request) {
-        var_dump($request->inputList('kien'));
-        // var_dump($request->fileList('kien'));
+        // var_dump($request->inputList('kien'));
+        var_dump($request->fileList('kien'));
 
-        // echo '<form method="post" enctype="multipart/form-data">
-        //     <input type="file" name="kien"><br/>
-        //     <input type="file" name="kien[]"><br/>
-        //     <button type="submit">Submit</button>
-        // </form>';
+        echo '<form method="post" enctype="multipart/form-data">
+            <input type="file" name="kien"><br/>
+            <input type="file" name="kien[]"><br/>
+            <button type="submit">Submit</button>
+        </form>';
     }
 
     public function xacthuc($request) {

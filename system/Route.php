@@ -37,24 +37,19 @@ class Route {
 
     protected function autoMap($path) {
         $path = trim($path, '/');
-        $base = 'Page';
         $control = 'Index';
         $action = 'index';
         if ($path) {
             $seg = $this->fitlerAppType($this->filterLang(explode('/', $path)));
             if ($seg) {
                 $count = count($seg);
-                $base = $seg[0];
+                $control = $seg[0];
                 if ($count > 1) {
-                    $control = $seg[1];
-                    if ($count > 2) {
-                        $action = str_replace('-', '_', $seg[2]);
-                        $this->parseParam($seg, $count);
-                    }
+                    $action = str_replace('-', '_', $seg[1]);
+                    $this->parseParam($seg, $count);
                 }
             }
         }
-        $this->request->setBase($base);
         $this->request->setController($control);
         $this->request->setAction($action);
 
@@ -119,7 +114,7 @@ class Route {
     }
 
     protected function parseParam($seg = [], $count = 0) {
-        for ($i=3; $i<$count; $i+=2) {
+        for ($i=2; $i<$count; $i+=2) {
             $this->request->setParam($seg[$i], $seg[$i+1]?? '');
         }
     }
@@ -127,12 +122,11 @@ class Route {
     public function loadApp() {
         $handle = null;
         $is_admin = $this->request->isAdmin();
-        $base = $this->request->getBase();
-        $_ = preg_split('/_-/', $this->request->getController());
-        $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.$base.'/'.implode('/', $_).'.php';
+        $_ = explode('_', $this->request->getController());
+        $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
-            $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.$base.'\\'.implode('\\', $_);
+            $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
             $action = $this->request->getAction();
             if ($this->match_item) {
                 $method = $this->match_item['type'];
@@ -160,14 +154,14 @@ class Route {
         header('HTTP/1.1 404 Not Found');
         if (!$this->request->isApi()) {
             $cfg = \Config::get('app.error.404');
-            $base = $cfg['module']?? '';
             $control = $cfg['controller']?? '';
             $action = $cfg['action']?? '';
             if ($control && $action) {
-                $file = __APP.'Controller/'.$cfg['module'].'/'.$cfg['controller'].'.php';
+                $_ = explode('_', $control);
+                $file = __APP.'Controller/'.implode('/', $_).'.php';
                 if (is_file($file)) {
                     include($file);
-                    $class = '\\Controller\\'.$cfg['module'].'\\'.$cfg['controller'];
+                    $class = '\\Controller\\'.implode('\\', $_);
                     $handle = [new $class(), $cfg['action']];
                     if (is_callable($handle)) {
                         $handle($this->request);
