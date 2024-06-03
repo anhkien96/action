@@ -1,15 +1,15 @@
 <?php
 
-namespace Control\Admin;
+namespace Admin\Controller\Product;
 
-class SanPham extends \Control\Admin\Base {
+class Index extends \Admin\Controller\Base {
 
     public function index($request) {
 
         // var_dump($request->getPage());
-        $t = microtime(true);
-        $this->view->products = \Reg::db()->table('category')->get();
-        echo microtime(true) - $t;
+        // $t = microtime(true);
+        // $this->view->products = \Reg::db()->table('category')->get();
+        // echo microtime(true) - $t;
 
         echo '<br/>';
         echo 'Admin San Pham';
@@ -31,7 +31,10 @@ class SanPham extends \Control\Admin\Base {
         // </form>';
     }
 
-    public function xacthuc() {
+    public function xacthuc($request) {
+        echo $request->param('id');
+        echo '<br/>';
+
         $validator = \Reg::get('validator');
         $rules = [
             'user.name' => ['required', 'text', 'min:3'],
@@ -45,6 +48,13 @@ class SanPham extends \Control\Admin\Base {
 
         $validator->check($rules, $data);
         var_dump($validator->getErrors());
+    }
+
+    public function scanAction() {
+        $actions = \Repo\Action::instance()->scanAction();
+        var_dump($actions);
+
+        // position de sap xep, keo tha, tien quan tri
     }
 }
 

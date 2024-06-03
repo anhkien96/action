@@ -57,17 +57,10 @@ class Reg {
     }
 
     public static function db() {
-        if (empty(self::$_obj['db'])) {
-            $class = self::$_map['db'];
-            self::$_obj['db'] = new $class();
-        }
-        return self::$_obj['db'];
+        return self::get('db');
     }
 
     public static function user() {
-        if (empty(self::$_obj['user'])) {
-            self::$_obj['user'] = new \Model\User\PublicUser();
-        }
-        return self::$_obj['user'];
+        return self::get('user');
     }
 }

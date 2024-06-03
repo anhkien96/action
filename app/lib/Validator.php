@@ -20,9 +20,9 @@ class Validator {
         return $this->data;
     }
 
-    protected function getValue($data = [], $key) {
+    public function getValue($key) {
         $_ = explode('.', $key);
-        $val = &$data;
+        $val = &$this->data;
         foreach ($_ as $key) {
             if (isset($val[$key])) {
                 $val = &$val[$key];
@@ -41,7 +41,7 @@ class Validator {
                 $rule = explode('|', $rule);
             }
 
-            $value = $this->getValue($this->data, $key);
+            $value = $this->getValue($key);
 
             $is_required = false;
             $is_list = false;

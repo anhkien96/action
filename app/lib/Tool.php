@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-class Text {
+class Tool {
 
     public static function sizeConvert($value) {
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];

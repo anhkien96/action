@@ -2,9 +2,18 @@
 
 class View {
 
-    protected $_data = [], $_except = ['password'];
+    protected $_data = [], $_except = ['password'], $_path;
 
     // dùng global except
+
+    public function __construct() {
+        if (\Reg::get('request')->isAdmin()) {
+            $this->_path = __APP.'Admin/View/';
+        }
+        else {
+            $this->_path = __APP.'View/';
+        }
+    }
 
     public function __get($name) {
         return $this->_data[$name]?? '';
@@ -15,7 +24,7 @@ class View {
     }
 
     public function render($name) {
-        include(__APP.'view/'.$name.'.php');
+        include($this->_path.$name.'.php');
     }
 
     public function jsonExcept($except = []) {

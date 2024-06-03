@@ -5,7 +5,7 @@ class Config {
     protected static $map = [];
 
     public static function load($name) {
-        static::$map[$name] = include (__APP. 'config/' . $name . '.php');
+        static::$map[$name] = include (__ROOT. 'config/' . $name . '.php');
     }
 
     public static function get($key, $default = '') {

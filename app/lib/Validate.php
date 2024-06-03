@@ -47,11 +47,7 @@ class Validate {
     }
 
     public function same($value, $field) {
-        if ($this->validator) {
-            $data = $this->validator->getData();
-            return isset($data[$field]) && ($data[$field] == $value);
-        }
-        return false;
+        return $this->validator && $this->validator->getValue($field) == $value;
     }
 
     public function exists($value, $table_field) {

@@ -7,7 +7,7 @@ class FileRaw {
 class Request {
 
     protected static $files = [], $format_file = true;
-    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $control, $action;
+    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $base, $controller, $action;
 
     public function __construct($option = []) {
         if (isset($option['except_trim'])) {
@@ -38,12 +38,20 @@ class Request {
         $this->is_api = $is_api;
     }
 
-    public function getControl() {
-        return $this->control;
+    public function getBase() {
+        return $this->base;
     }
 
-    public function setControl($control) {
-        $this->control = $control;
+    public function setBase($base) {
+        $this->base = $base;
+    }
+
+    public function getController() {
+        return $this->controller;
+    }
+
+    public function setController($controller) {
+        $this->controller = $controller;
     }
 
     public function getAction() {

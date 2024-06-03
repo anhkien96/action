@@ -13,9 +13,7 @@ include(__SYS . 'Route.php');
 
 spl_autoload_register(function($name) {
 	$_ = explode('\\', $name);
-	$type = lcfirst($_[0]);
-	unset($_[0]);
-	$file = __APP . $type.'/' .implode('/', $_). '.php';
+	$file = __APP .implode('/', $_). '.php';
 	if (isset($_[1]) && is_file($file)) {
 		include($file);
 	}

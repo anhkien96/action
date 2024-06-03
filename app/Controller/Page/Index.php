@@ -1,11 +1,12 @@
 <?php
 
-namespace Control;
+namespace Controller\Page;
 
-class Index extends Base {
+class Index extends \Controller\Base {
 
     public function index() {
         echo 'Index';
+        $this->view->render('category/index');
     }
 
     public function kien() {

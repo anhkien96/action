@@ -37,30 +37,28 @@ class Route {
 
     protected function autoMap($path) {
         $path = trim($path, '/');
-        $base = 'Page';
-        $control = 'Index';
-        $action = 'index';
         if ($path) {
             $seg = $this->fitlerAppType($this->filterLang(explode('/', $path)));
             if ($seg) {
                 $count = count($seg);
-                $base = $seg[0];
-                if ($count > 1) {
-                    $control = $seg[1];
-                    if ($count > 2) {
-                        $action = str_replace('-', '_', $seg[2]);
-                        $this->parseParam($seg, $count);
-                    }
-                }
+                $control = $seg[0];
+                $action = $count > 1 ? str_replace('-', '_', $seg[1]) : 'index';
+                $this->parseParam($seg, $count);
+            }
+            else {
+                $control = 'Index';
+                $action = 'index';
             }
         }
-        $this->request->setBase($base);
-        $this->request->setController($control);
+        else {
+            $control = 'Index';
+            $action = 'index';
+        }
+        $this->request->setControl($control);
         $this->request->setAction($action);
 
         $next = [$this, 'loadApp'];
-        $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), array_reverse(\Config::get('app.middleware', [])));
-        foreach ($middles as $middle) {
+        foreach (array_reverse(\Config::get('app.middle')) as $middle) {
             $next = function () use ($middle, $next) {
                 $handle = [new $middle(), 'handle'];
                 $handle($next, $this->request);
@@ -79,11 +77,18 @@ class Route {
     }
 
     protected function fitlerAppType($seg = []) {
-        if ($seg && $seg[0] == 'api') {
+        $type = array_shift($seg);
+        if ($type == 'api') {
             $this->request->setIsApi(true);
-            array_shift($seg);
+            if ($seg && $seg[0] == 'admin') {
+                $this->request->setIsAdmin(true);
+                array_shift($seg);
+            }
         }
-        if ($seg && $seg[0] == 'admin') {
+        elseif ($type == 'admin') {
+            $this->request->setIsAdmin(true);
+        }
+        elseif ($seg && $seg[0] == 'admin') {
             $this->request->setIsAdmin(true);
             array_shift($seg);
         }
@@ -119,7 +124,7 @@ class Route {
     }
 
     protected function parseParam($seg = [], $count = 0) {
-        for ($i=3; $i<$count; $i+=2) {
+        for ($i=2; $i<$count; $i+=2) {
             $this->request->setParam($seg[$i], $seg[$i+1]?? '');
         }
     }
@@ -127,12 +132,11 @@ class Route {
     public function loadApp() {
         $handle = null;
         $is_admin = $this->request->isAdmin();
-        $base = $this->request->getBase();
-        $_ = preg_split('/_-/', $this->request->getController());
-        $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.$base.'/'.implode('/', $_).'.php';
+        $_ = preg_split('/_-/', $this->request->getControl());
+        $file = __APP.'control/'.($is_admin? 'Admin/': '').implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
-            $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.$base.'\\'.implode('\\', $_);
+            $class = '\\Control\\'.($is_admin? 'Admin\\': '').implode('\\', $_);
             $action = $this->request->getAction();
             if ($this->match_item) {
                 $method = $this->match_item['type'];
@@ -159,16 +163,15 @@ class Route {
     protected function error404() {
         header('HTTP/1.1 404 Not Found');
         if (!$this->request->isApi()) {
-            $cfg = \Config::get('app.error.404');
-            $base = $cfg['module']?? '';
-            $control = $cfg['controller']?? '';
-            $action = $cfg['action']?? '';
+            $cfg404 = \Config::get('app.error.404');
+            $control = $cfg404['control']?? '';
+            $action = $cfg404['action']?? '';
             if ($control && $action) {
-                $file = __APP.'Controller/'.$cfg['module'].'/'.$cfg['controller'].'.php';
+                $file = __APP.'control/'.$cfg404['control'].'.php';
                 if (is_file($file)) {
                     include($file);
-                    $class = '\\Controller\\'.$cfg['module'].'\\'.$cfg['controller'];
-                    $handle = [new $class(), $cfg['action']];
+                    $class = '\\Control\\'.$cfg404['control'];
+                    $handle = [new $class(), $cfg404['action']];
                     if (is_callable($handle)) {
                         $handle($this->request);
                     }
