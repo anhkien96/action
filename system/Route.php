@@ -2,10 +2,9 @@
 
 class Route {
 
-    protected $request, $path, $method, $lang_def, $map = [], $match_item;
+    protected $request, $path, $method, $map = [], $match_item;
 
     public function __construct() {
-        $this->lang_def = \Config::get('app.lang.default');
         $this->request = \Reg::get('request');
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->setPath($_SERVER['REQUEST_URI']);
@@ -54,7 +53,12 @@ class Route {
         $this->request->setAction($action);
 
         $next = [$this, 'loadApp'];
-        $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), array_reverse(\Config::get('app.middleware', [])));
+
+        $middles = array_reverse(\Config::get('app.middleware', []));
+        if ($this->request->isAdmin()) {
+            $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), $middles);
+        }
+
         foreach ($middles as $middle) {
             $next = function () use ($middle, $next) {
                 $handle = [new $middle(), 'handle'];
@@ -67,7 +71,7 @@ class Route {
     protected function filterLang($seg = []) {
         if ($seg[0] == 'lang') {
             array_shift($seg);
-            $lang = array_shift($seg)?? $this->lang_def;
+            $this->request->setLang(array_shift($seg));
             // xử lý khi set Lang
         }
         return $seg;

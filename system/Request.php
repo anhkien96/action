@@ -7,7 +7,7 @@ class FileRaw {
 class Request {
 
     protected static $files = [], $format_file = true;
-    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $controller, $action;
+    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $controller, $action, $lang;
 
     public function __construct($option = []) {
         if (isset($option['except_trim'])) {
@@ -52,6 +52,14 @@ class Request {
 
     public function setAction($action) {
         $this->action = $action;
+    }
+
+    public function getLang() {
+        return $this->lang;
+    }
+
+    public function setLang($lang) {
+        $this->lang = $lang?? \Config::get('app.lang.default');
     }
 
     protected function getValue($data = [], $key, $default = '') {
