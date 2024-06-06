@@ -23,7 +23,11 @@ class Validate {
     }
 
     public function file($file) {
-        return isset($file['tmp_name']) && empty($file['error']) && is_file($file['tmp_name']) && is_uploaded_file($file['tmp_name']);
+        return isset($file->tmp_name) && empty($file->error) && is_file($file->tmp_name) && is_uploaded_file($file->tmp_name);
+    }
+
+    public function in($value, $in = []) {
+        return in_array($value, $in);
     }
 
     public function min($value, $len) {
@@ -59,29 +63,27 @@ class Validate {
     }
 
     public function size_min($file, $size) {
-        return isset($file['size']) && is_numeric($file['size']) && ($file['size'] >= \Lib\Tool::sizeConvert($size));
+        return isset($file->size) && is_numeric($file->size) && ($file->size >= \Lib\Tool::sizeConvert($size));
     }
 
     public function size_max($file, $size) {
-        return isset($file['size']) && is_numeric($file['size']) && ($file['size'] <= \Lib\Tool::sizeConvert($size));
+        return isset($file->size) && is_numeric($file->size) && ($file->size <= \Lib\Tool::sizeConvert($size));
     }
 
     public function mine($file, $mine = []) {
         if (is_string($mine)) {
             $mine = array_filter(explode(',', $mine), 'trim');
         }
-        return isset($file['type']) && in_array($file['type'], $mine);
+        return isset($file->type) && in_array($file->type, $mine);
     }
 
     public function unique($value, $table_field) {
         $_ = explode('.', $table_field, 2);
-        // return \Lib\DB::instance()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
-        return \Reg::db()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
+        return \Reg::query()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
     }
 
     protected function _checkExists($value, $table_field) {
         $_ = explode('.', $table_field, 2);
-        // return \Lib\DB::instance()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
-        return \Reg::db()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
+        return \Reg::query()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
     }
 }

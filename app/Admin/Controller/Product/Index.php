@@ -8,7 +8,7 @@ class Index extends \Admin\Controller\Base {
 
         // var_dump($request->getPage());
         // $t = microtime(true);
-        // $this->view->products = \Reg::db()->table('category')->get();
+        // $this->view->products = \Reg::query()->table('category')->get();
         // echo microtime(true) - $t;
 
         echo '<br/>';
@@ -37,7 +37,11 @@ class Index extends \Admin\Controller\Base {
 
         $validator = \Reg::get('validator');
         $rules = [
-            'user.name' => ['required', 'text', 'min:3'],
+            'user.name' => ['required', 'text', 'min:6', 'in' => ['Kien'], function($value, $validator) {
+                var_dump($validator->getValue('user.name'));
+                echo '<br/>';
+                $validator->addError('user.name', 'custom');
+            }],
         ];
 
         $data = [

@@ -7,7 +7,6 @@ class Validator {
     protected $validate, $data = [], $errors = [], $type_list = ['int', 'text', 'float', 'file'];
 
     public function __construct() {
-        // $this->validate = new \Lib\Validate();
         $this->validate = \Reg::get('validate');
         $this->validate->setValidator($this);
     }
@@ -50,23 +49,29 @@ class Validator {
             $diff_rule = [];
 
             if (in_array('required', $rule)) {
-                $diff_rule[] = 'required';
+                $diff_rule['required'] = true;
                 $is_required = true;
             }
             if (in_array('list', $rule)) {
-                $diff_rule[] = 'list';
+                $diff_rule['list'] = true;
                 $is_list = true;
             }
             foreach ($rule as $rule_value) {
                 if (in_array($rule_value, $this->type_list)) {
                     $value_type = $rule_value;
-                    $diff_rule[] = $rule_value;
+                    $diff_rule[$rule_value] = true;
                     break;
                 }
             }
 
             if ($diff_rule) {
-                $rule = array_diff($rule, $diff_rule);
+                $_rule = [];
+                foreach ($rule as $rule_key => &$rule_value) {
+                    if (!(is_string($rule_value) && isset($diff_rule[$rule_value]))) {
+                        $_rule[$rule_key] = $rule_value;
+                    }
+                }
+                $rule = &$_rule;
             }
 
             $check = true;
@@ -96,33 +101,38 @@ class Validator {
 
             if ($check) {
                 foreach ($rule as $rule_type => $rule_value) {
-                    if (is_numeric($rule_type)) {
-                        $_ = explode(':', $rule_value, 2);
-                        $rule_type = $_[0];
-                        $rule_value = isset($_[1]) ? $_[1] : '';
-                    }
                     if (is_callable($rule_value)) {
-                        $rule_value = $rule_value($value, $key);
+                        $rule_value($value, $this);
                     }
-    
-                    $handle = [$this->validate, $rule_type];
-                    if ($is_list) {
-                        foreach ($value as $item) {
-                            if (!$handle($item, $rule_value)) {
-                                $this->addError($key, $rule_type, $rule_value);
-                                break;
+                    else {
+                        if (is_numeric($rule_type)) {
+                            $_ = explode(':', $rule_value, 2);
+                            $rule_type = $_[0];
+                            $rule_value = isset($_[1]) ? $_[1] : '';
+                        }
+                        if (is_callable($rule_value)) {
+                            $rule_value = $rule_value($value, $key);
+                        }
+        
+                        $handle = [$this->validate, $rule_type];
+                        if ($is_list) {
+                            foreach ($value as $item) {
+                                if (!$handle($item, $rule_value)) {
+                                    $this->addError($key, $rule_type, $rule_value);
+                                    break;
+                                }
                             }
                         }
-                    }
-                    elseif (!$handle($value, $rule_value)) {
-                        $this->addError($key, $rule_type, $rule_value);
+                        elseif (!$handle($value, $rule_value)) {
+                            $this->addError($key, $rule_type, $rule_value);
+                        }
                     }
                 }
             }
         }
     }
 
-    protected function addError($key, $rule_type, $rule_value = '') {
+    public function addError($key, $rule_type, $rule_value = '') {
         $this->errors[$key][] = [$rule_type, $rule_value];
     }
 

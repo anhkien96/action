@@ -6,51 +6,77 @@ class Base {
 
     use \Singleton;
 
-    protected $db, $event;
+    protected $query, $event;//, $_reset = true;
 
     protected function __construct() {
-        // $this->db = \Lib\DB::instance();
-        $this->db = \Reg::db();
+        $this->query = \Reg::query();
+        $this->query->table($this->table)->order($this->getOrder());
         // $this->event = \Lib\Event::instance();
     }
 
+    public function getOrder() {
+        return 'id DESC';
+    }
+
+    // public function reset() {
+    //     $this->query->order($this->getOrder());
+    // }
+
+    // éo cần reset, tự mà reset
+
+    // public function order($order) {
+    //     $this->query->order($order);
+    // }
+
+    // public function query() {
+    //     $this->db->table($this->table);
+    //     return $this;
+    // }
+
+    // public function setReset($bool) {
+    //     $this->_reset = $bool;
+    // }
+
     public function exists($where, $param = []) {
-        return $this->db->table($this->table)->exists($where, $param);
+        return $this->query->exists($where, $param);
     }
 
     public function get($where, $param = []) {
-        return $this->db->table($this->table)->get($where, $param);
+        return $this->query->get($where, $param);
     }
     
     public function getAll($where, $param = []) {
-        return $this->db->table($this->table)->getAll($where, $param);
+        return $this->query->getAll($where, $param);
     }
 
     public function create($data = []) {
-        return $this->db->table($this->table)->create($data);
+        return $this->query->create($data);
     }
 
-    // public function createMany($data = []) {
-    //     return $this->db->table($this->table)->createMany($data);
-    // }
+    public function createMany($datas = []) {
+        $res = [];
+        foreach ($datas as $key => $data) {
+            $res[$key] = $this->create($data);
+        }
+        return $res;
+    }
 
     public function update($data = [], $where, $param = []) {
-        return $this->db->table($this->table)->update($data, $where, $param);
+        return $this->query->update($data, $where, $param);
     }
 
     public function delete($where, $param = []) {
-        return $this->db->table($this->table)->delete($where, $param);
+        return $this->query->delete($where, $param);
     }
 
-    // public function update($data = [], $id) {
-    //     return $this->db->table($this->table)->update($data, 'id = :id', ['id' => $id]);
-    // }
-
-    // public function delete($id) {
-    //     return $this->db->table($this->table)->delete('id = :id', ['id' => $id]);
-    // }
-
     public function __call($method, $param = []) {
-        return $this->db->table($this->table)->$method(...$param);
+        // if ($this->_reset) {
+        //     $this->db->repo($this)->$method(...$param);
+        // }
+        // else {
+        //     $this->db->$method(...$param);
+        // }
+        $this->query->$method(...$param);
+        return $this;
     }
 }

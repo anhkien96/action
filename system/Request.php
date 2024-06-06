@@ -261,7 +261,7 @@ class Request {
     public function param($key, $default = '') {
         $_ = explode('_', $key, 2);
         if (($_[1] ?? $_[0]) == 'id') {
-            return intval($this->param[$key]);
+            return intval($this->param[$key] ?? 0);
         }
         return $this->param[$key] ?? $default;
     }

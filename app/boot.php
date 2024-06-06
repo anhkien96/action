@@ -11,6 +11,7 @@ if ($timezone) {
 }
 
 \Reg::map('db', '\Lib\DB');
+\Reg::map('query', '\Lib\Query');
 \Reg::map('request', '\Request');
 \Reg::map('view', '\View');
 \Reg::map('validator', '\Lib\Validator');

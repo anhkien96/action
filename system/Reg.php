@@ -63,4 +63,9 @@ class Reg {
     public static function user() {
         return self::get('user');
     }
+
+    public static function query($db = null) {
+        $class = self::$_map['query'];
+        return new $class($db);
+    }
 }

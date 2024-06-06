@@ -65,7 +65,7 @@ class Category extends \Controller\Base {
 
     public function kien() {
         // $db = \Lib\DB::instance();
-        $db = \Reg::db();
+        $db = \Reg::query();
         
         // $res = $db->select('c.name, c.level')->table('category c INNER JOIN category c2 ON c.id=c2.id')->get('c.id=:id', ['id' => 3]);
         // $res = $this->repo->select('name, level')->get('id=?', [3]);

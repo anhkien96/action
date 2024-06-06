@@ -8,7 +8,7 @@ class Logger {
         $view = \Reg::get('view');
         // $req = \Reg::get('request');
         $view->kien = 'Kien Nguyen';
-        // var_dump($request->getControl());
+        // var_dump($request->getController());
         // var_dump($request->getAction());
         // var_dump($request->getPage());
         // var_dump($request->isAdmin());
