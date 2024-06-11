@@ -45,9 +45,9 @@ class Reg {
         return $obj;
     }
 
-    public static function db() {
-        return self::get('db');
-    }
+    // public static function db() {
+    //     return self::get('db');
+    // }
 
     public static function user() {
         return self::get('user');

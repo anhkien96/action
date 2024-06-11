@@ -2,7 +2,10 @@
 
 class View {
 
-    protected $_data = [], $_path, $_layout = 'main', $_view, $_load = '';
+    protected $_data = [], $_except = ['password'], $_path, $_layout = 'main', $_view, $_load = '';
+
+    // dùng global except
+    // except phải thuộc về model
 
     public function __construct() {
         $req = \Reg::get('request');
@@ -43,27 +46,21 @@ class View {
 
     public function output() {
         if ($this->_load) {
-            if ($this->_load == 'json') {
-                return json_encode($this->_data);
-            }
             if (!$this->_view) {
                 $req = \Reg::get('request');
                 $this->_view = str_replace('_', '/', $req->getController()).'/'.$req->getAction();
-                }
-            ob_start();
+            }
             if ($this->_load == 'layout') {
                 $this->render('_layout/'.$this->_layout);
             }
-            else {
+            elseif ($this->_load == 'view') {
                 $this->render($this->_view);
             }
-            $res = ob_get_contents();
-            ob_end_clean();
-            return $res;
         }
     }
 
     public function setLayout($layout = '') {
+        // có thể dùng chung cho construct nên cần
         $this->_layout = $layout;
     }
 
@@ -75,8 +72,18 @@ class View {
         $this->render($this->_view);
     }
 
-    public function json($data = []) {
-        $this->_load = 'json';
-        $this->_data = &$data;
+    public function jsonExcept($except = []) {
+        $this->_except = $except;
+    }
+
+    public function json($option = []) {
+        $except = isset($option['except']) ? $option['except'] : $this->_except;
+        $data = [];
+        foreach ($this->_data as $key => &$value) {
+            if (!in_array($key, $option['except'])) {
+                $data[$key] = $value;
+            }
+        }
+        return json_encode($data);
     }
 }

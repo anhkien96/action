@@ -52,7 +52,9 @@ class Route {
         $this->request->setController($control);
         $this->request->setAction($action);
 
-        $next = [$this, 'loadApp'];
+        $next = function() {
+            return $this->loadApp()?? \Reg::get('view')->output();
+        };
 
         $middles = array_reverse(\Config::get('app.middleware', []));
         if ($this->request->isAdmin()) {
@@ -62,10 +64,10 @@ class Route {
         foreach ($middles as $middle) {
             $next = function () use ($middle, $next) {
                 $handle = [new $middle(), 'handle'];
-                $handle($next, $this->request);
+                return $handle($next, $this->request);
             };
         }
-        $next();
+        echo $next();
     }
 
     protected function filterLang($seg = []) {
@@ -123,7 +125,7 @@ class Route {
         }
     }
 
-    public function loadApp() {
+    protected function loadApp() {
         $handle = null;
         $is_admin = $this->request->isAdmin();
         $_ = preg_split('/[_-]/', $this->request->getController());
@@ -147,10 +149,10 @@ class Route {
             }
         }
         if ($handle && is_callable($handle)) {
-            $handle($this->request);
+            return $handle($this->request);
         }
         else {
-            $this->error404();
+            return $this->error404();
         }
     }
 
@@ -168,7 +170,7 @@ class Route {
                     $class = '\\Controller\\'.implode('\\', $_);
                     $handle = [new $class(), $cfg['action']];
                     if (is_callable($handle)) {
-                        $handle($this->request);
+                        return $handle($this->request);
                     }
                 }
             }

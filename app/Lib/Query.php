@@ -2,33 +2,13 @@
 
 namespace Lib;
 
-class DB extends \PDO {
-    public function __construct() {
-        try {
-            $info = \Config::get('db');
-            if (empty($info['option'])) {
-                $info['option'] = [
-                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                    \PDO::ATTR_EMULATE_PREPARES => false
-                ];
-            }
-            $dsn = 'mysql:host='.$info['hostname'].';dbname='.$info['database'].(empty($info['port']) ? '' : ':'.$info['port']).';charset=utf8mb4';
-            parent::__construct($dsn, $info['username'], $info['password'], $info['option']);
-        }
-        catch (\PDOException $e) {
-            echo $e->getMessage();
-            exit();
-        }
-    }
-}
-
 class Query {
 
     protected static $limit_def = 0;
     protected $db, $table = '', $select = '*', $order = '', $limit, $offset = 0;
 
     public function __construct($db = null) {
-        $this->db = $db?? \Reg::db();
+        $this->db = $db?? \Reg::get('db');
         if (!static::$limit_def) {
             static::$limit_def = \Config::get('db.limit', 20);
         }

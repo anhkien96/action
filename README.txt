@@ -40,9 +40,6 @@
 
 // -----
 
-// load control:
-// $_ = array_map('ucfirst', preg_split('/_-/', $control));
-
 // xy ly view render json khi co 'api'
 // 
 
