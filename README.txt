@@ -1,4 +1,10 @@
+// tùy theo control, admin, gắn trước biến sẵn cho view
+// + từ middleware
+// + từ controller base
 
+
+// css, js dùng postCss, gulp hoặc kiểu vậy
+// phân quyền, validate, upload
 
 // GET, POST, PUT, DELETE ... __post, __get, ...
 // middleware

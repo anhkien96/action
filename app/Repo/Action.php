@@ -31,21 +31,21 @@ class Action extends Base {
     public function scanAction() {
         $res = [];
         $except = ['__construct'];
-        $controls = $this->scanControl(__APP.'control');
+        $controls = $this->scanControl(__APP.'Controller');
         foreach ($controls as $control) {
             $item = [
                 'control' => $control['control'],
                 // 'path' => $control['path'],
                 'level' => $control['level']
             ];
-            $class = '\\Control\\'.$control['control'];
+            $class = '\\Controller\\'.$control['control'];
             $app = new $class();
             foreach (get_class_methods($app) as $action) {
                 if (!in_array($action, $except) && is_callable([$app, $action])) {
                     $item['action'] = $action;
                     $res[] = $item;
 
-                    // check exist, add, updat to database
+                    // check exist, add, update to database
                 }
             }
         }

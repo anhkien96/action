@@ -122,9 +122,8 @@ class Query {
     }
 
     public function get($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
-        $this->limit = 1;
         $where = $where ? ' WHERE '.$where : '';
-        $sql = 'SELECT '.$this->select.' FROM '.$this->table.$where.$this->order.' LIMIT '.$this->limit.' OFFSET '.$this->offset;
+        $sql = 'SELECT '.$this->select.' FROM '.$this->table.$where.$this->order.' LIMIT 1 OFFSET '.$this->offset;
         // $this->reset();
         return $this->fetch($sql, $param, $mode);
     }

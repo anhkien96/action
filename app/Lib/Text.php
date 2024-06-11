@@ -4,7 +4,7 @@ namespace Lib;
 
 class Text {
 
-    public static function cameCase($str) {
+    public static function camelCase($str) {
         $_ = array_map('ucfirst', explode('_', $str));
         return implode('', $_);
     }

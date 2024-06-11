@@ -7,5 +7,4 @@ $route->get('/kien/', '/admin/Product/');
 // xy ly view render json khi co 'api'
 // auth theo tung control
 
-// middleware
 // role, permission

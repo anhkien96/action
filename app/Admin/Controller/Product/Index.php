@@ -5,13 +5,6 @@ namespace Admin\Controller\Product;
 class Index extends \Admin\Controller\Base {
 
     public function index($request) {
-
-        // var_dump($request->getPage());
-        // $t = microtime(true);
-        // $this->view->products = \Reg::query()->table('category')->get();
-        // echo microtime(true) - $t;
-
-        echo '<br/>';
         echo 'Admin San Pham';
         echo '<br/>';
         echo $this->view->kien;
@@ -25,20 +18,16 @@ class Index extends \Admin\Controller\Base {
         var_dump($request->fileList('kien'));
 
         echo '<form method="post" enctype="multipart/form-data">
-            <input type="file" name="kien"><br/>
             <input type="file" name="kien[]"><br/>
             <button type="submit">Submit</button>
         </form>';
     }
 
-    public function xacthuc($request) {
-        echo $request->param('id');
-        echo '<br/>';
-
+    public function xac_thuc__get($request) {
         $validator = \Reg::get('validator');
         $rules = [
-            'user.name' => ['required', 'text', 'min:6', 'in' => ['Kien'], function($value, $validator) {
-                var_dump($validator->getValue('user.name'));
+            'user.name' => ['required', 'text', 'min:6', 'in' => ['Kie2n'], function($value, $validator) {
+                // var_dump($validator->getValue('user.name'));
                 echo '<br/>';
                 $validator->addError('user.name', 'custom');
             }],
@@ -79,3 +68,14 @@ class Index extends \Admin\Controller\Base {
 // rule tạo ra để củng cố hoặc pass permission
 
 // có cần Admin View system các block, widget không?
+
+
+// ___________
+
+// Automatic system workflow / Udemy
+
+// Tạo một repo chứa danh sách condition, rồi lại liên kết đến ref
+
+// Cây cấu trúc dữ liệu mô phỏng
+
+// Tư duy thống kê

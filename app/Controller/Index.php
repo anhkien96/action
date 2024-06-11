@@ -5,16 +5,15 @@ namespace Controller;
 class Index extends \Controller\Base {
 
     public function index() {
-        echo 'Index';
-        $this->view->render('category/index');
+        $this->view->render('index');
     }
 
     public function kien() {
-        echo 'Kien';
-    }
-
-    public function kien__get($request) {
-        var_dump($request->param('page'));
-        echo 'Kien get';
+        $action_repo = \Repo\Action::instance();
+        // var_dump($action_repo->scanAction());
+        $action_repo->create([
+            'name' => 'Kiên',
+            'action' => 'Xây dựng bộ tìm kiếm'
+        ]);
     }
 }

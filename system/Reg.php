@@ -1,31 +1,20 @@
 <?php
 
-// class Reg {
+trait Singleton {
 
-//     protected static $_map = [], $_one = [], $_obj = [];
+    private static $__cls = [];
 
-//     public static function set($key, $value, $unique = true) {
-//         self::$_map[$key] = $value;
-//         self::$_one[$key] = $unique;
-//     }
+    protected function __construct() {}
 
-//     public static function get($key, $param = []) {
-//         if (self::$_one[$key]) {
-//             if (empty(self::$_obj[$key])) {
-//                 $class = self::$_map[$key];
-//                 self::$_obj[$key] = new $class(...$param);
-//             }
-//             return self::$_obj[$key];
-//         }
-//         $class = self::$_map[$key];
-//         return new $class(...$param);
-//     }
+    public static function instance() {
+        $name = get_called_class();
+        if (empty(self::$__cls[$name])) {
+            self::$__cls[$name] = new static();
+        }
+        return self::$__cls[$name];
+    }
+}
 
-//     public static function create($key, $param = []) {
-//         $class = self::$_map[$key];
-//         return new $class(...$param);
-//     }
-// }
 
 class Reg {
 

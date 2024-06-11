@@ -126,7 +126,7 @@ class Route {
     public function loadApp() {
         $handle = null;
         $is_admin = $this->request->isAdmin();
-        $_ = explode('_', $this->request->getController());
+        $_ = preg_split('/[_-]/', $this->request->getController());
         $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
@@ -161,7 +161,7 @@ class Route {
             $control = $cfg['controller']?? '';
             $action = $cfg['action']?? '';
             if ($control && $action) {
-                $_ = explode('_', $control);
+                $_ = preg_split('/[_-]/', $control);
                 $file = __APP.'Controller/'.implode('/', $_).'.php';
                 if (is_file($file)) {
                     include($file);

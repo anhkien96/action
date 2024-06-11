@@ -130,6 +130,7 @@ class Validator {
                 }
             }
         }
+        return !$this->errors;
     }
 
     public function addError($key, $rule_type, $rule_value = '') {

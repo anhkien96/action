@@ -198,34 +198,6 @@ class Request {
         }
     }
 
-    // protected function formatFiles() {
-    //     if (static::$format_file && $_FILES) {
-    //         static::$format_file = false;
-    //         $attr_keys = ['name', 'type', 'tmp_name', 'error', 'size'];
-    //         foreach ($_FILES as $key => &$file) {
-    //             if (is_array($file['name'])) {
-    //                 $size = count($file['name']);
-    //                 for ($i=0; $i<$size; $i++) {
-    //                     if (!is_array($file['name'][$i])) {
-    //                         $item = new \FileRaw();
-    //                         foreach ($attr_keys as $attr) {
-    //                             $item->$attr = $file[$attr][$i];
-    //                         }
-    //                         static::$files[$key][] = $item;
-    //                     }
-    //                 }
-    //             }
-    //             else {
-    //                 $item = new \FileRaw();
-    //                 foreach ($attr_keys as $attr) {
-    //                     $item->$attr = $file[$attr][$i];
-    //                 }
-    //                 static::$files[$key] = $item;
-    //             }
-    //         }
-    //     }
-    // }
-
     public function file($key) {
         return isset(static::$files[$key]) && is_object(static::$files[$key]) ? static::$files[$key] : null;
     }
@@ -233,19 +205,6 @@ class Request {
     public function fileList($key) {
         return isset(static::$files[$key]) && is_array(static::$files[$key]) ? array_filter(static::$files[$key], 'is_object') : [];
     }
-
-    // public function all() {
-    //     // chac phai de quy, phan biet theo key, value
-    //     $handle = $this->handle;
-    //     $data = [];
-    //     foreach ($_POST as $key => &$value) {
-    //         $data[$key] = $handle($value, $key);
-    //     }
-    //     foreach (static::$files as $key => &$file) {
-    //         $data[$key] = $file;
-    //     }
-    //     return $data;
-    // }
 
     public function all() {
         $data = [];
@@ -261,7 +220,7 @@ class Request {
     public function param($key, $default = '') {
         $_ = explode('_', $key, 2);
         if (($_[1] ?? $_[0]) == 'id') {
-            return intval($this->param[$key] ?? 0);
+            return intval($this->param[$key] ?? $default);
         }
         return $this->param[$key] ?? $default;
     }
