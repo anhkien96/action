@@ -62,7 +62,7 @@ class Request {
         $this->lang = $lang?? \Config::get('app.lang.default');
     }
 
-    protected function getValue($data = [], $key, $default = '') {
+    protected function getValue($data, $key, $default = '') {
         $_ = explode('.', $key);
         $val = &$data;
         foreach ($_ as $key) {

@@ -2,10 +2,10 @@
 
 class Route {
 
-    protected $request, $path, $method, $map = [], $match_item;
+    protected $req, $path, $method, $map = [], $match_item;
 
     public function __construct() {
-        $this->request = \Reg::get('request');
+        $this->req = \Reg::get('request');
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->setPath($_SERVER['REQUEST_URI']);
     }
@@ -49,31 +49,31 @@ class Route {
                 }
             }
         }
-        $this->request->setController($control);
-        $this->request->setAction($action);
+        $this->req->setController($control);
+        $this->req->setAction($action);
 
         $next = function() {
-            return $this->loadApp()?? \Reg::get('view')->output();
+            echo $this->loadApp()?? \Reg::get('view')->output();
         };
 
         $middles = array_reverse(\Config::get('app.middleware', []));
-        if ($this->request->isAdmin()) {
+        if ($this->req->isAdmin()) {
             $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), $middles);
         }
 
         foreach ($middles as $middle) {
             $next = function () use ($middle, $next) {
                 $handle = [new $middle(), 'handle'];
-                return $handle($next, $this->request);
+                return $handle($next, $this->req);
             };
         }
-        echo $next();
+        $next();
     }
 
     protected function filterLang($seg = []) {
         if ($seg[0] == 'lang') {
             array_shift($seg);
-            $this->request->setLang(array_shift($seg));
+            $this->req->setLang(array_shift($seg));
             // xử lý khi set Lang
         }
         return $seg;
@@ -81,11 +81,11 @@ class Route {
 
     protected function fitlerAppType($seg = []) {
         if ($seg && $seg[0] == 'api') {
-            $this->request->setIsApi(true);
+            $this->req->setIsApi(true);
             array_shift($seg);
         }
         if ($seg && $seg[0] == 'admin') {
-            $this->request->setIsAdmin(true);
+            $this->req->setIsAdmin(true);
             array_shift($seg);
         }
         return $seg;
@@ -96,7 +96,7 @@ class Route {
         $path = '/'.implode('/', $this->filterLang(explode('/', ltrim($path, '/'), 3)));
         $regex = '#/page/([0-9]+)/?$#';
         if (preg_match($regex, $path, $match)) {
-            $this->request->setParam('page', $match[1]);
+            $this->req->setParam('page', $match[1]);
             $path = preg_replace($regex, '/', $path);
         }
         $this->path = $path;
@@ -121,19 +121,19 @@ class Route {
 
     protected function parseParam($seg = [], $count = 0) {
         for ($i=2; $i<$count; $i+=2) {
-            $this->request->setParam($seg[$i], $seg[$i+1]?? '');
+            $this->req->setParam($seg[$i], $seg[$i+1]?? '');
         }
     }
 
     protected function loadApp() {
         $handle = null;
-        $is_admin = $this->request->isAdmin();
-        $_ = preg_split('/[_-]/', $this->request->getController());
+        $is_admin = $this->req->isAdmin();
+        $_ = preg_split('/[_-]/', $this->req->getController());
         $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
             $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
-            $action = $this->request->getAction();
+            $action = $this->req->getAction();
             if ($this->match_item) {
                 $method = $this->match_item['type'];
                 if ($method == 'ANY' || $method == $this->method) {
@@ -149,7 +149,7 @@ class Route {
             }
         }
         if ($handle && is_callable($handle)) {
-            return $handle($this->request);
+            return $handle($this->req);
         }
         else {
             return $this->error404();
@@ -158,7 +158,7 @@ class Route {
 
     protected function error404() {
         header('HTTP/1.1 404 Not Found');
-        if (!$this->request->isApi()) {
+        if (!$this->req->isApi()) {
             $cfg = \Config::get('app.error.404');
             $control = $cfg['controller']?? '';
             $action = $cfg['action']?? '';
@@ -170,7 +170,7 @@ class Route {
                     $class = '\\Controller\\'.implode('\\', $_);
                     $handle = [new $class(), $cfg['action']];
                     if (is_callable($handle)) {
-                        return $handle($this->request);
+                        return $handle($this->req);
                     }
                 }
             }

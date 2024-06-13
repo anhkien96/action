@@ -25,5 +25,14 @@ $route = new \Route();
 include(__APP . 'route.php');
 $route->match();
 
-
 // cache in repo sang một bảng tạm thời, hợp lý không? cache các mối quan hệ liên kết đén bảng khác
+// chức năng update hệ thống từ trung tâm giống kiểu wordpress
+
+// repo update, check trường update -> tác động cái gì, kiểu onchange giống Odoo
+// Odoo nó hỗ trợ onchange ở model để reactive trên giao diện, nên được như Odoo thì tốt, không được cũng tạm dùng được rồi
+
+// cần thêm lớp Event, Listen không?
+// học Symfony, đỉnh cao hơn Laravel nếu hiểu tận gốc, còn triển khai Mautic,...
+
+// PHP quản trị, web, fontend cho phép sửa nhanh.
+// Hệ thống lập lịch đa luồng có thể dùng Python, haha, PHP gọi API sang Python, ...

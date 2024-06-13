@@ -2,11 +2,11 @@
 
 class View {
 
-    protected $_data = [], $_path, $_layout = 'main', $_view, $_load = '';
+    protected $_req, $_data = [], $_path, $_layout = 'main', $_view, $_load = '';
 
     public function __construct() {
-        $req = \Reg::get('request');
-        if ($req->isAdmin()) {
+        $this->_req = \Reg::get('request');
+        if ($this->_req->isAdmin()) {
             $this->_path = __APP.'Admin/View/';
         }
         else {
@@ -43,13 +43,12 @@ class View {
 
     public function output() {
         if ($this->_load) {
-            if ($this->_load == 'json') {
+            if ($this->_req->isAPI() || $this->_load == 'json') {
                 return json_encode($this->_data);
             }
             if (!$this->_view) {
-                $req = \Reg::get('request');
-                $this->_view = str_replace('_', '/', $req->getController()).'/'.$req->getAction();
-                }
+                $this->_view = str_replace('_', '/', $this->_req->getController()).'/'.$this->_req->getAction();
+            }
             ob_start();
             if ($this->_load == 'layout') {
                 $this->render('_layout/'.$this->_layout);
@@ -57,9 +56,7 @@ class View {
             else {
                 $this->render($this->_view);
             }
-            $res = ob_get_contents();
-            ob_end_clean();
-            return $res;
+            return ob_get_clean();
         }
     }
 
@@ -75,8 +72,10 @@ class View {
         $this->render($this->_view);
     }
 
-    public function json($data = []) {
+    public function json($data = null) {
         $this->_load = 'json';
-        $this->_data = &$data;
+        if ($data) {
+            $this->_data = &$data;
+        }
     }
 }
