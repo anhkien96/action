@@ -2,7 +2,7 @@
 
 class Route {
 
-    protected $req, $path, $method, $map = [], $match_item;
+    protected $req, $path, $method, $map = [], $map_match;
 
     public function __construct() {
         $this->req = \Reg::get('request');
@@ -52,9 +52,7 @@ class Route {
         $this->req->setController($control);
         $this->req->setAction($action);
 
-        $next = function() {
-            echo $this->loadApp()?? \Reg::get('view')->output();
-        };
+        $next = [\Reg::get('response'), 'handle'];
 
         $middles = array_reverse(\Config::get('app.middleware', []));
         if ($this->req->isAdmin()) {
@@ -109,12 +107,12 @@ class Route {
                 foreach ($match as $key => $val) {
                     $item['dest'] = str_replace('['.$key.']', $val, $item['dest']);
                 }
-                $this->match_item = $item;
+                $this->map_match = $item;
                 $this->autoMap($item['dest']);
                 break;
             }
         }
-        if (!$this->match_item) {
+        if (!$this->map_match) {
             $this->autoMap($this->path);
         }
     }
@@ -125,7 +123,7 @@ class Route {
         }
     }
 
-    protected function loadApp() {
+    public function loadApp() {
         $handle = null;
         $is_admin = $this->req->isAdmin();
         $_ = preg_split('/[_-]/', $this->req->getController());
@@ -134,8 +132,8 @@ class Route {
             include($file);
             $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
             $action = $this->req->getAction();
-            if ($this->match_item) {
-                $method = $this->match_item['type'];
+            if ($this->map_match) {
+                $method = $this->map_match['type'];
                 if ($method == 'ANY' || $method == $this->method) {
                     $handle = [new $class(), $action];
                 }
@@ -151,9 +149,7 @@ class Route {
         if ($handle && is_callable($handle)) {
             return $handle($this->req);
         }
-        else {
-            return $this->error404();
-        }
+        return $this->error404();
     }
 
     protected function error404() {

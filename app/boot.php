@@ -12,7 +12,9 @@ if ($timezone) {
 
 \Reg::map('db', '\Lib\DB');
 \Reg::map('query', '\Lib\Query');
+\Reg::map('route', '\Route');
 \Reg::map('request', '\Request');
+\Reg::map('response', '\Response');
 \Reg::map('view', '\View');
 \Reg::map('validator', '\Lib\Validator');
 \Reg::map('validate', '\Lib\Validate');

@@ -16,4 +16,11 @@ class Index extends \Controller\Base {
             'action' => 'Xây dựng bộ tìm kiếm'
         ]);
     }
+
+    public function hello() {
+        $this->view->name = 'Kiên Nguyễn';
+        $this->view->age = 28;
+        // return $this->view->display('index');
+        return $this->view->json();
+    }
 }

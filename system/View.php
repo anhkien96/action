@@ -41,41 +41,38 @@ class View {
         }
     }
 
-    public function output() {
-        if ($this->_load) {
-            if ($this->_req->isAPI() || $this->_load == 'json') {
-                return json_encode($this->_data);
-            }
-            if (!$this->_view) {
-                $this->_view = str_replace('_', '/', $this->_req->getController()).'/'.$this->_req->getAction();
-            }
-            ob_start();
-            if ($this->_load == 'layout') {
-                $this->render('_layout/'.$this->_layout);
-            }
-            else {
-                $this->render($this->_view);
-            }
-            return ob_get_clean();
-        }
-    }
-
     public function setLayout($layout = '') {
         $this->_layout = $layout;
+    }
+
+    public function getLayout() {
+        return $this->_layout;
     }
 
     public function setView($view) {
         $this->_view = $view;
     }
 
-    public function mainContent() {
-        $this->render($this->_view);
+    public function getView() {
+        if (!$this->_view) {
+            $this->_view = str_replace('_', '/', $this->_req->getController()).'/'.$this->_req->getAction();
+        }
+        return $this->_view;
     }
 
-    public function json($data = null) {
+    public function mainContent() {
+        $this->render($this->getView());
+    }
+
+    public function json() {
         $this->_load = 'json';
-        if ($data) {
-            $this->_data = &$data;
-        }
+    }
+
+    public function getResponseType() {
+        return $this->_load;
+    }
+
+    public function getData() {
+        return $this->_data;
     }
 }
