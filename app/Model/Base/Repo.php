@@ -6,9 +6,12 @@ class Repo {
 
     use \Singleton;
 
-    protected $query, $event;//, $_reset = true;
+    protected $table, $query, $event;//, $_reset = true;
 
-    protected function __construct() {
+    protected function __construct($table = '') {
+        if ($table) {
+            $this->table = $table;
+        }
         $this->query = \Reg::query();
         $this->query->table($this->table)->order($this->getOrder());
         // $this->event = \Lib\Event::instance();
@@ -61,8 +64,8 @@ class Repo {
         return $res;
     }
 
-    public function update($data = [], $where, $param = []) {
-        return $this->query->update($data, $where, $param);
+    public function update($where, $data = [], $param = []) {
+        return $this->query->update($where, $data, $param);
     }
 
     public function delete($where, $param = []) {

@@ -137,7 +137,7 @@ class Query {
         return $res;
     }
 
-    public function update($data = [], $where, $param = []) {
+    public function update($where, $data = [], $param = []) {
         $where = $where ? ' WHERE '.$where : '';
         $store_keys = [];
         $store_data = [];

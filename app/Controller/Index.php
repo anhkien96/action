@@ -4,6 +4,18 @@ namespace Controller;
 
 class Index extends \Controller\Base {
 
+    public function demo_repo() {
+        $action_service = \Loader::service('Admin::Action');
+        $t = microtime(true);
+        try {
+            $action_service->scanAction();
+        }
+        catch(Exception $e) {
+            
+        }
+        echo microtime(true) - $t;
+    }
+
     public function index() {
         // $query = \Reg::query()->table('product')->select('*');
 
@@ -20,11 +32,29 @@ class Index extends \Controller\Base {
 
         // \Model\Entity\Product::query($query)->getList();
 
-        $repo_products = \Model\Repo\Product::instance()->select('*')->getAll();
+        // $products = \Model\Repo\Product::instance()->select('*')->getAll();
+
+        $products = \Loader::repo('Product')->select('*')->getAll();
 
         // $products = \Model\Collection\Product::query($query)->load();
 
-        $products = \Model\Collection\Product::load($repo_products);
+        $productCollection = \Model\Collection\Product::load($products);
+
+        // ---
+        // dùng factory tạo collection theo tên nhé, không tạo kiểu này, không linh động, khó sửa code
+
+        $productCollection = \Factory::collection('Product')->load($products);
+
+        // trường hợp collection không tồn tại thì load collection base
+        // áp dụng cho cả phân hệ khác
+        // dùng loader tốt hơn nhỉ
+        // Factory kiểu phải tạo mới, nghe Loader tường mình hơn
+        
+        // -> Factory cho tạo mới
+        // -> Loader cho singleton
+
+        // create, construction nên tách biệt ra khỏi lớp bản thể
+        // ---
 
         // thêm cái default select all, default repo
 
