@@ -1,8 +1,8 @@
 <?php
 
-namespace Model\User;
+namespace Model\Entity;
 
-class PublicUser extends Base {
+class PublicUser extends \Model\Base\Entity {
 
     public function __construct($data = []) {
         $data = ['id' => 0];

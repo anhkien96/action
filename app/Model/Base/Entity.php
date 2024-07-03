@@ -1,8 +1,8 @@
 <?php
 
-namespace Model;
+namespace Model\Base;
 
-class Base {
+class Entity {
 
     protected $_data = [];
 

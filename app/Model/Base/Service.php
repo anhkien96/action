@@ -1,8 +1,8 @@
 <?php
 
-namespace Service;
+namespace Model\Base;
 
-class Base {
+class Service {
 
     use \Singleton;
 

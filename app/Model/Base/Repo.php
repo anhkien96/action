@@ -1,8 +1,8 @@
 <?php
 
-namespace Repo;
+namespace Model\Base;
 
-class Base {
+class Repo {
 
     use \Singleton;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Model\Base;
 
 class Collection {
 

@@ -4,9 +4,9 @@ class View {
 
     protected $_req, $_data = [], $_path, $_layout = 'main', $_view, $_load = '';
 
-    public function __construct() {
+    public function __construct($is_admin = null) {
         $this->_req = \Reg::get('request');
-        if ($this->_req->isAdmin()) {
+        if ($is_admin ?? $this->_req->isAdmin()) {
             $this->_path = __APP.'Admin/View/';
         }
         else {

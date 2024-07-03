@@ -1,8 +1,8 @@
 <?php
 
-namespace Model\User;
+namespace Model\Base;
 
-class Base extends \Model\Base {
+class User extends Entity {
 
     // protected $id;
 

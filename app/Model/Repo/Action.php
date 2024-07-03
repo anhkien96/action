@@ -1,8 +1,8 @@
 <?php
 
-namespace Repo;
+namespace Model\Repo;
 
-class Action extends Base {
+class Action extends \Model\Base\Repo {
 
     protected $table = 'action';
 
