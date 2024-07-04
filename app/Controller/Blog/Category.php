@@ -2,7 +2,7 @@
 
 namespace Controller\Blog;
 
-class Category extends \Controller\Base {
+class Category extends \Base\Controller {
 
     public function __construct() {
         parent::__construct();

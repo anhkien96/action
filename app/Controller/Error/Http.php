@@ -2,7 +2,7 @@
 
 namespace Controller\Error;
 
-class Http extends \Controller\Base
+class Http extends \Base\Controller
 {
     public function error404()
     {

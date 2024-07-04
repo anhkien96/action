@@ -2,6 +2,6 @@
 
 namespace Model\Entity;
 
-class Product extends \Model\Base\Entity {
+class Product extends \Base\Entity {
     
 }

@@ -6,17 +6,24 @@ class Validator {
 
     protected $validate, $data = [], $errors = [], $type_list = ['int', 'text', 'float', 'file'];
 
-    public function __construct() {
-        $this->validate = \Reg::get('validate');
-        $this->validate->setValidator($this);
-    }
-
-    protected function setData($data) {
+    public function setData($data) {
         $this->data = $data;
     }
 
     public function getData() {
         return $this->data;
+    }
+
+    public function setValidate($validate) {
+        $this->validate = $validate;
+    }
+
+    public function getValidate() {
+        if (!$this->validate) {
+            $this->setValidate(\Reg::create('validate'));
+            $this->validate->setValidate($this);
+        }
+        return $this->validate;
     }
 
     public function getValue($key) {
@@ -35,6 +42,8 @@ class Validator {
     
     public function check($rules = [], $data = []) {
         $this->setData($data);
+        $validate = $this->getValidate();
+
         foreach ($rules as $key => $rule) {
             if (is_string($rule)) {
                 $rule = explode('|', $rule);
@@ -81,7 +90,7 @@ class Validator {
             }
 
             if ($check && $value_type) {
-                $handle = [$this->validate, $value_type];
+                $handle = [$validate, $value_type];
                 if ($is_list) {
                     foreach ($value as $item) {
                         if (!$handle($item)) {
@@ -114,7 +123,7 @@ class Validator {
                             $rule_value = $rule_value($value, $key);
                         }
         
-                        $handle = [$this->validate, $rule_type];
+                        $handle = [$validate, $rule_type];
                         if ($is_list) {
                             foreach ($value as $item) {
                                 if (!$handle($item, $rule_value)) {

@@ -2,7 +2,7 @@
 
 namespace Model\Entity;
 
-class Category extends \Model\Base\Entity {
+class Category extends \Base\Entity {
 
     
 }

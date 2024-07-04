@@ -2,7 +2,7 @@
 
 namespace Model\Repo;
 
-class Action extends \Model\Base\Repo {
+class Action extends \Base\Repo {
 
     protected $table = 'action';
 

@@ -2,6 +2,6 @@
 
 namespace Model\Repo;
 
-class Product extends \Model\Base\Repo {
+class Product extends \Base\Repo {
     
 }

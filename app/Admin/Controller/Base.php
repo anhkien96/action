@@ -2,5 +2,5 @@
 
 namespace Admin\Controller;
 
-class Base extends \Controller\Base {
+class Base extends \Base\Controller {
 }

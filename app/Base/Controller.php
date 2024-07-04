@@ -1,8 +1,8 @@
 <?php
 
-namespace Controller;
+namespace Base;
 
-class Base {
+class Controller {
 
     protected $view;
 

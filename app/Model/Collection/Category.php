@@ -2,7 +2,7 @@
 
 namespace Model\Collection;
 
-class Category extends \Model\Base\Collection
+class Category extends \Base\Collection
 {
-    protected $model = 'Model\Category';
+    protected $entity = 'Category';
 }

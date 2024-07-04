@@ -1,20 +1,20 @@
 <?php
 
-namespace Model\Base;
+namespace Base;
 
 class Collection {
 
-    protected $model, $items = [];
+    protected $entity, $items = [];
 
-    public function __construct($items = [], $model = '') {
-        if ($model) {
-            $this->setModel($model);
+    public function __construct($items = [], $entity = '') {
+        if ($entity) {
+            $this->setEntity($entity);
         }
         $this->setItems($items);
     }
 
-    public function setModel($model) {
-        $this->model = $model;
+    public function setEntity($name) {
+        $this->entity = $name;
     }
 
     public function clear() {
@@ -37,8 +37,9 @@ class Collection {
             $this->items[] = $item;
         }
         else {
-            $model = $this->model;
-            $this->items[] = new $model($item);
+            // $class = $this->entity;
+            // $this->items[] = new $class($item);
+            $this->items[] = \Factory::entity($this->entity, $item);
         }
     }
 

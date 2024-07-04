@@ -2,7 +2,7 @@
 
 namespace Admin\Controller;
 
-class Index extends \Admin\Controller\Base {
+class Index extends \Admin\Base\Controller {
 
     // public function __construct() {
     //     parent::__construct();

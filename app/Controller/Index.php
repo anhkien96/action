@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-class Index extends \Controller\Base {
+class Index extends \Base\Controller {
 
     public function demo_repo() {
         $action_service = \Loader::service('Admin::Action');
@@ -38,12 +38,12 @@ class Index extends \Controller\Base {
 
         // $products = \Model\Collection\Product::query($query)->load();
 
-        $productCollection = \Model\Collection\Product::load($products);
+        // $productCollection = \Model\Collection\Product::load($products);
 
         // ---
         // dùng factory tạo collection theo tên nhé, không tạo kiểu này, không linh động, khó sửa code
 
-        $productCollection = \Factory::collection('Product')->load($products);
+        $productCollection = \Factory::collection('Product')->setItems($products);
 
         // trường hợp collection không tồn tại thì load collection base
         // áp dụng cho cả phân hệ khác

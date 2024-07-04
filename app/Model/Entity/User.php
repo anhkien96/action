@@ -2,6 +2,6 @@
 
 namespace Model\Entity;
 
-class User extends \Model\Base\Entity {
+class User extends \Base\Entity {
     
 }

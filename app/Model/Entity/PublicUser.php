@@ -2,7 +2,7 @@
 
 namespace Model\Entity;
 
-class PublicUser extends \Model\Base\Entity {
+class PublicUser extends \Base\Entity {
 
     public function __construct($data = []) {
         $data = ['id' => 0];

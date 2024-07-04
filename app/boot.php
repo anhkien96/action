@@ -18,4 +18,4 @@ if ($timezone) {
 \Reg::map('view', '\View');
 \Reg::map('validator', '\Lib\Validator');
 \Reg::map('validate', '\Lib\Validate');
-\Reg::map('user', '\Model\User\PublicUser');
+\Reg::map('user', '\Model\Entity\PublicUser');

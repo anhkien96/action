@@ -2,7 +2,7 @@
 
 namespace Admin\Controller\Product;
 
-class Index extends \Admin\Controller\Base {
+class Index extends \Admin\Base\Controller {
 
     public function index($request) {
         echo 'Admin San Pham';
