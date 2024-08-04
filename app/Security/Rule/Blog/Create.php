@@ -10,7 +10,7 @@ class Create {
 
     // public function allowUser_ref_Kien() {
     //     // \Reg::set('user', $user);
-    //      $user = \Reg::user();
+    //      $user = \Loader::user();
     // }
 
     public function handle($user) {

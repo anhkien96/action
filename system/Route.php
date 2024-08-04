@@ -2,7 +2,7 @@
 
 class Route {
 
-    protected $req, $path, $method, $map = [], $map_match;
+    protected $req, $path, $method, $map = [];//, $map_match;
 
     public function __construct() {
         $this->req = \Reg::get('request');
@@ -11,7 +11,10 @@ class Route {
     }
 
     protected function add($type, $src, $dest) {
-        $this->map[] = ['type' => $type, 'src' => $src, 'dest' => $dest];
+        // if (empty($this->map[$src])) {
+        //     $this->map[$src] = [];
+        // }
+        $this->map[$src][$type] = $dest;
     }
 
     public function get($src, $dest) {
@@ -101,20 +104,26 @@ class Route {
     }
 
     public function match() {
-        foreach ($this->map as $item) {
-            if (preg_match('#^'.$item['src'].'$#', $this->path, $match)) {
-                unset($match[0]);
-                foreach ($match as $key => $val) {
-                    $item['dest'] = str_replace('['.$key.']', $val, $item['dest']);
+        $dest = '';
+        if (isset($this->map[$this->path])) {
+            $item = $this->map[$this->path];
+            $dest = $item[$this->method] ?? $item['ANY'] ?? '';
+        }
+        else {
+            foreach ($this->map as $src => $item) {
+                if (preg_match('#^'.$src.'$#', $this->path, $match)) {
+                    $dest = $item[$this->method] ?? $item['ANY'] ?? '';
+                    if ($dest) {
+                        unset($match[0]);
+                        foreach ($match as $key => $val) {
+                            $dest = str_replace('['.$key.']', $val, $dest);
+                        }
+                    }
                 }
-                $this->map_match = $item;
-                $this->autoMap($item['dest']);
                 break;
             }
         }
-        if (!$this->map_match) {
-            $this->autoMap($this->path);
-        }
+        $this->autoMap($dest? $dest : $this->path);
     }
 
     protected function parseParam($seg = [], $count = 0) {
@@ -132,19 +141,31 @@ class Route {
             include($file);
             $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
             $action = $this->req->getAction();
-            if ($this->map_match) {
-                $method = $this->map_match['type'];
-                if ($method == 'ANY' || $method == $this->method) {
-                    $handle = [new $class(), $action];
-                }
+            $app = new $class();
+            // if ($this->map_match) {
+            //     $method = $this->map_match['type'];
+            //     if ($method == $this->method) {
+            //         $handle = [$app, $action. '__' .$method];
+            //         if (!is_callable($handle)) {
+            //             $handle = [$app, $action];
+            //         }
+            //     }
+            //     elseif ($method == 'ANY') {
+            //         $handle = [$app, $action];
+            //     }
+            // }
+            // else {
+
+            // ----------------------------
+
+            // check method type và check method ANY từ bên ngoài rồi, nên không cần phần trên nữa
+            // cẩn thận hơn thì kiểm tra action không chứa __get, __post, __put, __delete
+
+            $handle = [$app, $action. '__' .$this->method];
+            if (!is_callable($handle)) {
+                $handle = [$app, $action];
             }
-            else {
-                $app = new $class();
-                $handle = [$app, $action. '__' .$this->method];
-                if (!is_callable($handle)) {
-                    $handle = [$app, $action];
-                }
-            }
+            // }
         }
         if ($handle && is_callable($handle)) {
             return $handle($this->req);

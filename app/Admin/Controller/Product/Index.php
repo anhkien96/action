@@ -9,7 +9,7 @@ class Index extends \Admin\Base\Controller {
         echo '<br/>';
         echo $this->view->kien;
 
-        $user = \Reg::user();
+        $user = \Loader::user();
         var_dump($user);
     }
 
@@ -24,7 +24,7 @@ class Index extends \Admin\Base\Controller {
     }
 
     public function xac_thuc__get($request) {
-        $validator = \Reg::get('validator');
+        $validator = \Factory::validator();
         $rules = [
             'user.name' => ['required', 'text', 'min:6', 'in' => ['Kie2n'], function($value, $validator) {
                 // var_dump($validator->getValue('user.name'));

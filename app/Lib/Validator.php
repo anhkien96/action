@@ -20,7 +20,7 @@ class Validator {
 
     public function getValidate() {
         if (!$this->validate) {
-            $this->setValidate(\Reg::create('validate'));
+            $this->setValidate(\Factory::validate());
             $this->validate->setValidate($this);
         }
         return $this->validate;

@@ -6,80 +6,86 @@ class Repo {
 
     use \Singleton;
 
-    protected $table, $query, $event;//, $_reset = true;
+    protected $table;//, $event;
 
-    protected function __construct($table = '') {
+    public function __construct($table = '') {
         if ($table) {
-            $this->table = $table;
+            $this->setTable($table);
         }
-        $this->query = \Reg::query();
-        $this->query->table($this->table)->order($this->getOrder());
         // $this->event = \Lib\Event::instance();
+    }
+
+    public functioN getSelect() {
+        return '*';
     }
 
     public function getOrder() {
         return 'id DESC';
     }
 
-    // public function reset() {
-    //     $this->query->order($this->getOrder());
-    // }
-
-    // éo cần reset, tự mà reset
-
-    // public function order($order) {
-    //     $this->query->order($order);
-    // }
-
-    // public function query() {
-    //     $this->db->table($this->table);
-    //     return $this;
-    // }
-
-    // public function setReset($bool) {
-    //     $this->_reset = $bool;
-    // }
-
-    public function exists($where, $param = []) {
-        return $this->query->exists($where, $param);
+    public function getLimit() {
+        return \Config::get('db.limit', 20);
     }
 
-    public function get($where, $param = []) {
-        return $this->query->get($where, $param);
+    public function setTable($table) {
+        $this->table = $table;
     }
+
+    public function getTable() {
+        return $this->table;
+    }
+
+    public function setQueryDefault($query) {
+        $query->setSelectDefault($this->getSelect());
+        $query->setOrderDefault($this->getOrder());
+        $query->setLimitDefault($this->getLimit());
+    }
+
+    public function query() {
+        return \Factory::query()->setRepo($this);
+    }
+
+    // public function exists($where = '', $param = []) {
+    //     return $this->query()->exists($where, $param);
+    // }
+
+    // public function get($where = '', $param = []) {
+    //     return $this->query()->get($where, $param);
+    // }
     
-    public function getAll($where, $param = []) {
-        return $this->query->getAll($where, $param);
+    // public function getAll($where = '', $param = []) {
+    //     return $this->query()->getAll($where, $param);
+    // }
+
+    public function hookGet($query, $fn, $where = '', $param = [], $mode = '') {
+        // $with_tag = $query->getOption('with_tag');
+        return $fn($where, $param, $mode);
     }
 
-    public function create($data = []) {
-        return $this->query->create($data);
+    public function hookCreate($query, $fn, $data = []) {
+        // before
+        $res = $fn($data);
+        // after
+        return $res;
     }
 
-    public function createMany($datas = []) {
+    public function hookCreateMany($query, $fn, $datas = []) {
         $res = [];
         foreach ($datas as $key => $data) {
-            $res[$key] = $this->create($data);
+            $res[$key] = $fn($data);
         }
         return $res;
     }
 
-    public function update($where, $data = [], $param = []) {
-        return $this->query->update($where, $data, $param);
-    }
+    // public function update($where, $data = [], $param = []) {
+    //     return $this->query()->update($where, $data, $param);
+    // }
 
-    public function delete($where, $param = []) {
-        return $this->query->delete($where, $param);
-    }
+    // public function delete($where, $param = []) {
+    //     return $this->query()->delete($where, $param);
+    // }
 
-    public function __call($method, $param = []) {
-        // if ($this->_reset) {
-        //     $this->db->repo($this)->$method(...$param);
-        // }
-        // else {
-        //     $this->db->$method(...$param);
-        // }
-        $this->query->$method(...$param);
-        return $this;
-    }
+    // public function __call($method, $param = []) {
+    //     return $this->query()->$method(...$param);
+    // }
 }

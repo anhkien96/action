@@ -79,11 +79,11 @@ class Validate {
 
     public function unique($value, $table_field) {
         $_ = explode('.', $table_field, 2);
-        return \Reg::query()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
+        return \Factory::query()->table($_[0])->total($field.'=:value', ['value' => $_[1]]) <= 1;
     }
 
     protected function _checkExists($value, $table_field) {
         $_ = explode('.', $table_field, 2);
-        return \Reg::query()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
+        return \Factory::query()->table($_[0])->exists($field.'=:value', ['value' => $_[1]]);
     }
 }

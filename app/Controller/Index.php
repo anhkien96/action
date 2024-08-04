@@ -5,19 +5,42 @@ namespace Controller;
 class Index extends \Base\Controller {
 
     public function demo_repo() {
+        // $action_service = \Loader::service('Admin::Action/Create');
+        // $action_service = \Loader::service('Admin::Action_Create');
+
+        $action_repo = \Loader::repo('Action');
+        $action_repo->query()->option(['with_tag' => true]);
+
         $action_service = \Loader::service('Admin::Action');
-        $t = microtime(true);
-        try {
-            $action_service->scanAction();
-        }
-        catch(Exception $e) {
+        // $t = microtime(true);
+        // try {
+        //     $action_service->scanAction();
+        // }
+        // catch(Exception $e) {
             
-        }
-        echo microtime(true) - $t;
+        // }
+        $action = $action_service->select('name')->get();
+        var_dump($action);
+        // $action = $action_service->reset()->get();
+        // return $action;
+        $action = $action_service->get();
+        var_dump($action);
+        // echo microtime(true) - $t;
+
+        // ----
+
+        // $repo = \Loader::repo('Action');
+        // $action_list = $repo->query()->select('*')->getAll();
+
+        // repo là duy nhất
+        // mỗi lần gọi query, tạo mỗi query mới, làm cách này OK hơn, tách rời được luôn
+        // giải quyết luôn được vấn đề
+
+        // kết hợp ý tưởng Laravel Scope, hay lắm, để tiền xử lý, scope tách rời, tái sử dụng
     }
 
     public function index() {
-        // $query = \Reg::query()->table('product')->select('*');
+        // $query = \Factory::query()->table('product')->select('*');
 
         // $query = \Model\Repo\Product::instance()->select('*');
 
