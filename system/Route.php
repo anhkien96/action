@@ -14,7 +14,7 @@ class Route {
         // if (empty($this->map[$src])) {
         //     $this->map[$src] = [];
         // }
-        $this->map[$src][$type] = $dest;
+        $this->map[rtrim($src, '/')][$type] = $dest;
     }
 
     public function get($src, $dest) {

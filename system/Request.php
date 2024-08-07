@@ -6,10 +6,8 @@ class Request {
     protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $controller, $action, $lang;
 
     public function __construct($option = []) {
-        if (isset($option['except_trim'])) {
-            foreach ($option['except_trim'] as $key) {
-                $this->except_trim[] = $key;
-            }
+        if (isset($option['except_trim']) && is_array($option['except_trim'])) {
+            $this->except_trim[] = $option['except_trim'];
         }
         static::formatFiles();
     }

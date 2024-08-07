@@ -4,10 +4,64 @@ namespace Lib;
 
 class Query {
 
-    protected $db, $table = '', $select = '', $select_def = '*', $order = '', $order_def = '' , $limit = 0, $limit_def = 0, $offset = 0;
+    protected $db, $repo, $table = '', $option = [], $select = '', $select_def = '*', $order = '', $order_def = '' , $limit = 0, $limit_def = 0, $offset = 0;
+
+    // public function __construct($db = null) {
+    //     $this->db = $db?? \Reg::get('db');
+
+    //     // if (!static::$limit_def) {
+    //     //     static::$limit_def = \Config::get('db.limit', 20);
+    //     // }
+    //     // $this->limit = static::$limit_def;
+    // }
+
+    // public function __construct($ctx) {
+    //     $_ctx = clone \Reg::get('ctx');
+    //     $_ctx->merge($ctx);
+    //     $this->db = $_ctx->get('db')?? \Reg::get('db');
+    // }
 
     public function __construct($ctx = []) {
         $this->db = $ctx['db']?? \Reg::get('db');
+
+        // nâng cấp lên dùng theo tên, nếu có nhiều db, kiểu read, write. dùng tên string linh động hơn
+        // --> \Reg::db('read')
+        // --> \Reg::db('write') ?? \Reg::db()
+        // --> \Reg::db('write) ?? -> tự trong không có dùng db mặc địch, không cần check như dòng trên
+        // cơ chế stick giống Laravel, db write vừa write có thể dụng tạm để read cho realtime
+
+        // implement hàm db trong Reg để xử lý đa db
+        // sửa config db -> đa db, tham khảo Laravel
+
+        // tái struct thư mục dự án, các thành phần
+
+        // kết hợp Repo với Query ? -> xem kỹ xem, 1 repo có thể nhiều query
+
+        ## ((
+        // không dùng query builder từ repo ở controller, service...
+        // dùng query builder trong repo, cần tùy chỉnh thì viết hàm trong repo, truyền tham số
+        ## )) 
+        ## (1)
+
+        // hay xem ý tưởng Laravel, tầng Scope của nó còn là tấng dưới của Model
+        // chẳng lẽ tách ra tầng nữa Scope
+        // -> Repo > Query > Scope        
+        // -> Khi gọi trực tiếp từ Query không ảnh hưởng những cái cấu hình sẵn cho table
+        // selectDefault, LimitDefault, OrderDefault, ... phải ở trong Scope
+        // Scope ánh xạ theo tên table
+
+        # -> xử lý được cái 1, sẽ sử dụng được ở bất kỳ đâu
+
+        // xem xét xem dùng như Laravel rất hay, Model riêng, Repo riêng
+
+        # ---------
+
+        # Nếu dùng Admin basic (jQuery / Bootstrap) layout giữ state sidebar, menu
+
+        # -------
+        // triển khai Model, Scope giống Laravel, (mối quan hệ)
+
+        // daisan update -> có lớp, hàm viewdata trả về để có thể dùng được cho nhiều chỗ khác 
     }
 
     public function getDB() {
@@ -37,9 +91,34 @@ class Query {
         return $this;
     }
 
-    public function table($table) {
-        $this->table = $table;
+    public function setRepo($repo) {
+        $repo->setQueryDefault($this);
+        $this->repo = $repo;
+        $this->table = $repo->getTable();
         return $this;
+    }
+
+    public function getRepo() {
+        return $this->repo;
+    }
+
+    public function table($table) {
+        if (!$this->repo) {
+            $this->table = $table;
+        }
+        return $this;
+    }
+
+    public function option($option = []) {
+        $this->option = $option;
+        return $this;
+    }
+
+    public function getOption($key = '', $default = '') {
+        if ($key) {
+            return $this->option[$key]?? $default;
+        }
+        return $this->option;
     }
 
     public function select($select) {
@@ -152,16 +231,30 @@ class Query {
         }
     }
 
-    public function get($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
+    public function onlyGet($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
         $where = $where ? ' WHERE '.$where : '';
         $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT 1 OFFSET '.$this->offset;
         return $this->fetch($sql, $param, $mode);
     }
 
-    public function getAll($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
+    public function get($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
+        if ($this->repo && method_exists($this->repo, 'getHook')) {
+            return $this->repo->getHook($this, [$this, 'onlyGet'], $where, $param, $mode);
+        }
+        return $this->onlyGet($where, $param, $mode);
+    }
+
+    public function onlyGetAll($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
         $where = $where ? ' WHERE '.$where : '';
         $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT '.$this->limitValue().' OFFSET '.$this->offset;
         return $this->fetchAll($sql, $param, $mode);
+    }
+
+    public function getAll($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
+        if ($this->repo && method_exists($this->repo, 'getAllHook')) {
+            return $this->repo->getAllHook($this, [$this, 'onlyGetAll'], $where, $param, $mode);
+        }
+        return $this->onlyGetAll($where, $param, $mode);
     }
 
     public function exists($where = '') {
@@ -173,30 +266,30 @@ class Query {
         return $res? $res['_total'] : 0;
     }
 
-    public function create($data = []) {
+    public function onlyCreate($data = []) {
         $keys = array_keys($data);
         return $this->exec('INSERT INTO '.$this->table.$this->makeInsertField($keys).' VALUES '.$this->makeInsertHolder($keys), $data);
     }
 
-    public function createMany($datas = []) {
-        $keys = array_keys($datas[0]);
-        $store_hold = [];
-        $store_data = [];
-        $n = 0;
-        foreach ($datas as $row) {
-            $hold = [];
-            foreach ($keys as $key) {
-                $name = $n.'__'.$key;
-                $hold[] = ':'.$name;
-                $store_data[$name] = $row[$key];
-            }
-            $store_hold[] = '('.implode(',', $hold).')';
-            $n++;
+    public function create($data = []) {
+        if ($this->repo && method_exists($this->repo, 'hookCreate')) {
+            return $this->repo->hookCreate($this, [$this, 'onlyCreate'], $data);
         }
-        return $this->exec('INSERT INTO '.$this->table.$this->makeInsertField($keys).' VALUES '.implode(',', $store_hold), $store_data);
+        return $this->onlyCreate($data);
     }
 
-    public function update($where, $data = [], $param = []) {
+    public function createMany($datas = []) {
+        if ($this->repo && method_exists($this->repo, 'hookCreateMany')) {
+            return $this->repo->hookCreateMany($this, [$this, 'onlyCreate'], $datas);
+        }
+        $res = [];
+        foreach ($datas as $key => $data) {
+            $res[$key] = $this->create($data);
+        }
+        return $res;
+    }
+
+    public function onlyUpdate($where, $data = [], $param = []) {
         $where = $where ? ' WHERE '.$where : '';
         $store_keys = [];
         $store_data = [];
@@ -207,8 +300,22 @@ class Query {
         return $this->exec('UPDATE '.$this->table.' SET '.$this->makeUpdateHolder($store_keys).$where, array_merge($store_data, $param));
     }
 
-    public function delete($where, $param = []) {
+    public function update($where, $data = [], $param = []) {
+        if ($this->repo && method_exists($this->repo, 'hookUpdate')) {
+            return $this->repo->hookUpdate($this, [$this, 'onlyUpdate'], $where, $data, $param);
+        }
+        return $this->onlyUpdate($where, $data, $param);
+    }
+
+    public function onlyDelete($where, $param = []) {
         return $this->exec('DELETE FROM '.$this->table.' WHERE '.$where, $param);
+    }
+
+    public function delete($where, $param = []) {
+        if ($this->repo && method_exists($this->repo, 'hookDelete')) {
+            return $this->repo->hookDelete($this, [$this, 'onlyDelete'], $where, $param);
+        }
+        return $this->onlyDelete($where, $param);
     }
 
     protected function makeInsertField($keys) {

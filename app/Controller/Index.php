@@ -4,6 +4,16 @@ namespace Controller;
 
 class Index extends \Base\Controller {
 
+    public function kien_test() {
+        \Factory::query()->table('option')->createMany([
+            ['name' => '1', 'value' => '1'],
+            ['name' => '2', 'value' => '2']
+        ]);
+
+        $data = \Factory::query()->table('product')->select('*')->getAll();
+        var_dump($data);
+    }
+
     public function demo_repo() {
         // $action_service = \Loader::service('Admin::Action/Create');
         // $action_service = \Loader::service('Admin::Action_Create');
