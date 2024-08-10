@@ -4,7 +4,7 @@ namespace Lib;
 
 class Query {
 
-    protected $db, $table = '', $select = '', $select_def = '*', $order = '', $order_def = '' , $limit = 0, $limit_def = 0, $offset = 0;
+    protected $db, $table = '', $select = '', $select_def = '*', $order = '', $order_def = '' , $limit = 0, $limit_def = 0, $skip = 0;
 
     public function __construct($ctx = []) {
         $this->db = $ctx['db']?? \Reg::get('db');
@@ -33,7 +33,7 @@ class Query {
         $this->resetSelect();
         $this->resetOrder();
         $this->resetLimit();
-        $this->offset = 0;
+        $this->skip = 0;
         return $this;
     }
 
@@ -99,8 +99,8 @@ class Query {
         return $this->limit? $this->limit: $this->getLimitDefault();
     }
 
-    public function offset($offset) {
-        $this->offset = $offset;
+    public function skip($skip) {
+        $this->skip = $skip;
         return $this;
     }
 
@@ -154,13 +154,13 @@ class Query {
 
     public function get($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
         $where = $where ? ' WHERE '.$where : '';
-        $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT 1 OFFSET '.$this->offset;
+        $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT 1 OFFSET '.$this->skip;
         return $this->fetch($sql, $param, $mode);
     }
 
     public function getAll($where = '', $param = [], $mode = \PDO::FETCH_ASSOC) {
         $where = $where ? ' WHERE '.$where : '';
-        $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT '.$this->limitValue().' OFFSET '.$this->offset;
+        $sql = 'SELECT '.$this->selectValue().' FROM '.$this->table.$where.$this->orderValue().' LIMIT '.$this->limitValue().' OFFSET '.$this->skip;
         return $this->fetchAll($sql, $param, $mode);
     }
 

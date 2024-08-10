@@ -2,7 +2,7 @@
 
 namespace Base;
 
-class Model extends Query {
+class Repo {
 
     protected $table;//, $scope = [];//, $event;
 
@@ -85,9 +85,9 @@ class Repo  {
     //     ];
     // }
 
-    protected function __scopeSelect($query) {
-        $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());
-    }
+    // protected function __scopeSelect($query) {
+    //     $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());
+    // }
 
     public function getSelect() {
         return '*';
@@ -99,6 +99,51 @@ class Repo  {
 
     public function getLimit() {
         return \Config::get('db.limit', 20);
+    }
+
+    public function get($id) {
+        return $this->query()->where('id', $id)->get();
+    }
+
+    public function getAll() {
+        return $this->selectQuery()->getAll();
+    }
+
+    public function insert($data = []) {
+        return $this->query()->insert($data);
+    }
+
+    public function update($id, $data = []) {
+        return $this->query()->where('id=:id', ['id' => $id])->update($data);
+    }
+
+    public function delete($id) {
+        return $this->query()->where('id=:id', ['id' => $id])->delete();
+    }
+
+    public function getBy($field, $value, $cfg = []) {
+        $select = $cfg['select'] ?? '';
+        $skip = $cfg['skip'] ?? 0;
+        $query = $this->query();
+        $query->select($select? $select: $this->getSelect());
+        return $query->where($field.'=:value', ['value' => $value])->get();
+    }
+
+    public function getAllBy($field, $value, $cfg = []) {
+        $select = $cfg['select'] ?? '';
+        $limit = $cfg['limit'] ?? 0;
+        $skip = $cfg['skip'] ?? 0;
+        $query = $this->selectQuery();
+        if ($select) {
+            $query->select($select);
+        }
+        if ($limit > 0) {
+            $query->limit($limit);
+        }
+        if ($skip > 0) {
+            $query->skip($skip);
+        }
+        return $query->where($field.'=:value', ['value' => $value])->getAll();
     }
 
     // protected function query($cfg = []) {
@@ -137,7 +182,7 @@ class Repo  {
 
 class Product extends Repo {
 
-    protected $table = 'product';
+    protected $table = 'products';
 
     // public function __construct() {
     //     parent::__construct();
@@ -149,14 +194,14 @@ class Product extends Repo {
     //         //     'limit' => \Config::get('db.limit', 20),
     //         // ],
     //         'select' => function($query) {
-    //             $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());   
+    //             $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());
     //         }
     //     ];
     // }
 
-    protected function __scopeSelect($query) {
-        $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());
-    }
+    // protected function __scopeSelect($query) {
+    //     $query->select($this->getSelect())->order($this->getOrder())->limit($this->getLimit());
+    // }
 
     // protected function scopeAfterSelect($query, $data) {
         
@@ -170,4 +215,8 @@ class Product extends Repo {
     }
 }
 
+// --------
+
 // cơ chế option trong query
+
+// Làm middlware trong controller, phân quyền

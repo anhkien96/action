@@ -4,11 +4,43 @@ namespace Base;
 
 class Controller {
 
-    protected $view;
+    protected $view;//, $_middleware = [];
 
     public function __construct() {
         $this->view = \Reg::get('view');
     }
+
+    // protected function middleware($name) {
+    //     // thêm to doing
+    //     $this->_middleware[] = $name;
+    //     return $this;
+    // }
+
+    // public function internalMiddleware() {
+    //     $req = \Reg::get('request');
+    //     $next = function() use($req) {
+    //         $action = $req->getAction();
+    //         $handle = [$this, $action. '__' .$req->method()];
+    //         if (!is_callable($handle)) {
+    //             $handle = [$this, $action];
+    //         }
+    //         if (is_callable($handle)) {
+    //             return $handle($this->req);
+    //         }
+    //         // return 404;
+    //     };
+    //     foreach (array_reverse($this->_middleware) as $name) {
+    //         $next = function () use ($name, $next, $req) {
+    //             $middle = new $name();
+    //             return $middle->handle($next);
+    //         }
+    //     }
+    //     return $next;
+    // }
+
+    // public function responseInsideMiddleware() {
+    //     return 123;
+    // }
 
     // public function __access() {
     //     return ['*' => '@user'];

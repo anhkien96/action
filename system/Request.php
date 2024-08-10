@@ -3,9 +3,10 @@
 class Request {
 
     protected static $files = [], $format_file = true;
-    protected $except_trim = [], $param = [], $is_admin = false, $is_api = false, $controller, $action, $lang;
+    protected $except_trim = [], $method, $param = [], $site = '', $is_api = false, $controller, $action, $lang;
 
     public function __construct($option = []) {
+        $this->method = $_SERVER['REQUEST_METHOD'];
         if (isset($option['except_trim']) && is_array($option['except_trim'])) {
             $this->except_trim[] = $option['except_trim'];
         }
@@ -16,12 +17,16 @@ class Request {
         return new static($option);
     }
 
-    public function isAdmin() {
-        return $this->is_admin;
+    public function method() {
+        return $this->method;
     }
 
-    public function setIsAdmin($is_admin) {
-        $this->is_admin = $is_admin;
+    public function site() {
+        return $this->site;
+    }
+
+    public function setSite($site) {
+        $this->site = $site;
     }
 
     public function isApi() {

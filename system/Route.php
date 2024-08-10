@@ -2,18 +2,15 @@
 
 class Route {
 
-    protected $req, $path, $method, $map = [];//, $map_match;
+    protected $req, $path, $method, $map = [];
 
     public function __construct() {
         $this->req = \Reg::get('request');
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->method = $this->req->method();
         $this->setPath($_SERVER['REQUEST_URI']);
     }
 
     protected function add($type, $src, $dest) {
-        // if (empty($this->map[$src])) {
-        //     $this->map[$src] = [];
-        // }
         $this->map[rtrim($src, '/')][$type] = $dest;
     }
 
@@ -62,10 +59,10 @@ class Route {
             $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), $middles);
         }
 
-        foreach ($middles as $middle) {
-            $next = function () use ($middle, $next) {
-                $handle = [new $middle(), 'handle'];
-                return $handle($next, $this->req);
+        foreach ($middles as $name) {
+            $next = function () use ($name, $next) {
+                $middle = new $name();
+                return $middle->handle($next, $this->req);
             };
         }
         $next();
@@ -85,9 +82,15 @@ class Route {
             $this->req->setIsApi(true);
             array_shift($seg);
         }
-        if ($seg && $seg[0] == 'admin') {
-            $this->req->setIsAdmin(true);
-            array_shift($seg);
+        // if ($seg && $seg[0] == 'admin') {
+        //     $this->req->setIsAdmin(true);
+        //     array_shift($seg);
+        // }
+        if ($seg) {
+            $this->req->setSite(array_shift($seg));
+        }
+        else {
+            $this->req->setSite('Main');
         }
         return $seg;
     }
@@ -140,35 +143,15 @@ class Route {
         if (is_file($file)) {
             include($file);
             $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
-            $action = $this->req->getAction();
             $app = new $class();
-            // if ($this->map_match) {
-            //     $method = $this->map_match['type'];
-            //     if ($method == $this->method) {
-            //         $handle = [$app, $action. '__' .$method];
-            //         if (!is_callable($handle)) {
-            //             $handle = [$app, $action];
-            //         }
-            //     }
-            //     elseif ($method == 'ANY') {
-            //         $handle = [$app, $action];
-            //     }
-            // }
-            // else {
-
-            // ----------------------------
-
-            // check method type và check method ANY từ bên ngoài rồi, nên không cần phần trên nữa
-            // cẩn thận hơn thì kiểm tra action không chứa __get, __post, __put, __delete
-
+            $action = $this->req->getAction();
             $handle = [$app, $action. '__' .$this->method];
             if (!is_callable($handle)) {
                 $handle = [$app, $action];
             }
-            // }
         }
         if ($handle && is_callable($handle)) {
-            return $handle($this->req);
+            return $handle($this->req->param('id'));
         }
         return $this->error404();
     }

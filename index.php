@@ -1,7 +1,8 @@
 <?php
 
 define('__ROOT', realpath(__DIR__) . '/');
-define('__APP', __ROOT. 'app/');
+define('__SHARE', __ROOT. 'shared/');
+define('__SITE', __ROOT. 'site/');
 define('__SYS', __ROOT. 'system/');
 
 include(__SYS . 'Reg.php');
@@ -10,10 +11,29 @@ include(__SYS . 'Request.php');
 include(__SYS . 'View.php');
 include(__SYS . 'Route.php');
 
+// spl_autoload_register(function($name) {
+// 	$_ = explode('\\', $name);
+// 	if (isset($_[1]) && ($file = __APP.implode('/', $_).'.php') && is_file($file)) {
+// 		include($file);
+// 	}
+// 	else {
+// 		include(__SYS. $name.'.php');
+// 	}
+// });
+
 spl_autoload_register(function($name) {
 	$_ = explode('\\', $name);
-	if (isset($_[1]) && ($file = __APP.implode('/', $_).'.php') && is_file($file)) {
-		include($file);
+	if (isset($_[1])) {
+		if ($_[0] == 'Site') {
+			unset($_[0]);
+			$file = __SITE.implode('/', $_).'.php';
+		}
+		else {
+			$file = __SHARED.implode('/', $_).'.php';
+		}
+		if (is_file($file)) {
+			include($file);
+		}
 	}
 	else {
 		include(__SYS. $name.'.php');

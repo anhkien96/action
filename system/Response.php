@@ -17,7 +17,7 @@ class Response {
     
     public function handle() {
         $res = $this->route->loadApp();
-        if ($res) {
+        if ($res !== null) {
             echo $this->json($res);
         }
         else {

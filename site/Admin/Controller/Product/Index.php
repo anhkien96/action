@@ -4,7 +4,7 @@ namespace Admin\Controller\Product;
 
 class Index extends \Admin\Base\Controller {
 
-    public function index($request) {
+    public function index() {
         echo 'Admin San Pham';
         echo '<br/>';
         echo $this->view->kien;
@@ -13,9 +13,15 @@ class Index extends \Admin\Base\Controller {
         var_dump($user);
     }
 
-    public function kien($request) {
-        // var_dump($request->inputList('kien'));
-        var_dump($request->fileList('kien'));
+    public function update($id) {
+        $validator = $this->validator();
+        
+        return $id;
+    }
+
+    public function kien() {
+        // var_dump($this->req->inputList('kien'));
+        var_dump($this->req->fileList('kien'));
 
         echo '<form method="post" enctype="multipart/form-data">
             <input type="file" name="kien[]"><br/>
@@ -23,7 +29,7 @@ class Index extends \Admin\Base\Controller {
         </form>';
     }
 
-    public function xac_thuc__get($request) {
+    public function xac_thuc__get() {
         $validator = \Factory::validator();
         $rules = [
             'user.name' => ['required', 'text', 'min:6', 'in' => ['Kie2n'], function($value, $validator) {
