@@ -1,8 +1,16 @@
 <?php
 
-namespace Controller;
+namespace site\main\Controller;
+use site\main\Base\Controller;
 
-class Index extends \Base\Controller {
+class Index extends Controller {
+
+    public function index() {
+        $this->view->khau_hieu = 'Kiên làm được';
+        return $this->view->display('index');
+
+        // tách route cho mỗi site riêng
+    }
 
     public function kien_test() {
         \Factory::query()->table('option')->createMany([
@@ -49,7 +57,7 @@ class Index extends \Base\Controller {
         // kết hợp ý tưởng Laravel Scope, hay lắm, để tiền xử lý, scope tách rời, tái sử dụng
     }
 
-    public function index() {
+    public function index_test() {
         // $query = \Factory::query()->table('product')->select('*');
 
         // $query = \Model\Repo\Product::instance()->select('*');

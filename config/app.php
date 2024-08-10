@@ -3,16 +3,13 @@
 return [
     'debug' => true,
     'timezone' => 'Asia/Ho_Chi_Minh',
-    // 'middleware' => [
-    //     '\Middleware\Logger',
-    // ],
-    // 'admin_middleware' => [
-    //     '\Admin\Middleware\Auth',
-    // ],
+
     'site_active' => [
         'main' => 1,
         'admin' => 1
     ],
+    'site_default' => 'main',
+
     'site' => [
         'main' => [
             'middleware' => [
@@ -28,6 +25,7 @@ return [
             ]
         ]
     ],
+    
     'lang' => [
         'default' => 'vi'
     ],

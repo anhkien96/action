@@ -1,8 +1,9 @@
 <?php
 
-namespace Admin\Controller;
+namespace site\admin\Controller;
+use site\admin\Base\Controller;
 
-class Index extends \Admin\Base\Controller {
+class Index extends Controller {
 
     // public function __construct() {
     //     parent::__construct();

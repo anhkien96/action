@@ -41,7 +41,7 @@ spl_autoload_register(function($name) {
 });
 
 include(__SHARED . 'boot.php');
-$route = new \Route();
+$route = \Reg::get('route');
 include(__SHARED . 'route.php');
 $route->match();
 

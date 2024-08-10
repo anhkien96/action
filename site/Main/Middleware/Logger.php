@@ -1,6 +1,6 @@
 <?php
 
-namespace Middleware;
+namespace site\main\Middleware;
 
 class Logger {
 

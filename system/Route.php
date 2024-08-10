@@ -2,11 +2,10 @@
 
 class Route {
 
-    protected $req, $path, $method, $map = [];
+    protected $req, $path, $map = [];
 
     public function __construct() {
         $this->req = \Reg::get('request');
-        $this->method = $this->req->method();
         $this->setPath($_SERVER['REQUEST_URI']);
     }
 
@@ -39,7 +38,7 @@ class Route {
         $control = 'Index';
         $action = 'index';
         if ($path) {
-            $seg = $this->fitlerAppType($this->filterLang(explode('/', $path)));
+            $seg = $this->filterSite($this->filterApi($this->filterLang(explode('/', $path))));
             if ($seg) {
                 $count = count($seg);
                 $control = $seg[0];
@@ -48,7 +47,10 @@ class Route {
                     $this->parseParam($seg, $count);
                 }
             }
+        } else {
+            $this->req->setSite();
         }
+
         $this->req->setController($control);
         $this->req->setAction($action);
 
@@ -65,7 +67,7 @@ class Route {
     }
 
     protected function filterLang($seg = []) {
-        if ($seg[0] == 'lang') {
+        if ($seg && $seg[0] == 'lang') {
             array_shift($seg);
             $this->req->setLang(array_shift($seg));
             // xử lý khi set Lang
@@ -73,27 +75,31 @@ class Route {
         return $seg;
     }
 
-    protected function fitlerAppType($seg = []) {
+    protected function filterApi($seg = []) {
         if ($seg && $seg[0] == 'api') {
             $this->req->setIsApi(true);
             array_shift($seg);
         }
+        return $seg;
+    }
+
+    protected function filterSite($seg = []) {
         if ($seg) {
             $this->req->setSite(array_shift($seg));
         }
         else {
-            $this->req->setSite('main');
+            $this->req->setSite();
         }
         return $seg;
     }
 
     protected function setPath($path) {
         $path = explode('?', $path, 2)[0];
-        $path = '/'.implode('/', $this->filterLang(explode('/', ltrim($path, '/'), 3)));
+        $path = '/'.implode('/', $this->filterApi($this->filterLang(explode('/', ltrim($path, '/'), 4))));
         $regex = '#/page/([0-9]+)/?$#';
         if (preg_match($regex, $path, $match)) {
             $this->req->setParam('page', $match[1]);
-            $path = preg_replace($regex, '/', $path);
+            $path = preg_replace($regex, '', $path);
         }
         $this->path = $path;
     }
@@ -102,12 +108,12 @@ class Route {
         $dest = '';
         if (isset($this->map[$this->path])) {
             $item = $this->map[$this->path];
-            $dest = $item[$this->method] ?? $item['ANY'] ?? '';
+            $dest = $item[$this->req->method()] ?? $item['ANY'] ?? '';
         }
         else {
             foreach ($this->map as $src => $item) {
                 if (preg_match('#^'.$src.'$#', $this->path, $match)) {
-                    $dest = $item[$this->method] ?? $item['ANY'] ?? '';
+                    $dest = $item[$this->req->method()] ?? $item['ANY'] ?? '';
                     if ($dest) {
                         unset($match[0]);
                         foreach ($match as $key => $val) {
@@ -137,7 +143,7 @@ class Route {
             $class = '\\site\\'.$site.'\\Controller\\'.implode('\\', $_);
             $app = new $class();
             $action = $this->req->getAction();
-            $handle = [$app, $action. '__' .$this->method];
+            $handle = [$app, $action. '__' .$this->req->method()];
             if (!is_callable($handle)) {
                 $handle = [$app, $action];
             }
