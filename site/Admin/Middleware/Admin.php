@@ -1,6 +1,6 @@
 <?php
 
-namespace Admin\Middleware;
+namespace site\addmin\Middleware;
 
 class Admin {
 
@@ -8,7 +8,7 @@ class Admin {
         // check kiểu file exist controller middleware của controller cụ thể, link động từng phần
         $req = \Reg::get('request');
         $control = $req->getController();
-        $file = __APP.($req->isAdmin()? 'Admin/': '').'Middleware/Controller/'.str_replace('\\', '/', $control).'.php';
+        $file = __SITE.$req->site().'/Middleware/Controller/'.str_replace('\\', '/', $control).'.php';
         if (is_file($file)) {
             include($file);
         }

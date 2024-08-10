@@ -84,7 +84,7 @@ class Factory {
         if (isset($_[1])) {
             $mod = $_[0];
             $name = $_[1];
-            $file = __APP.$mod.'/Model/'.$type.'/'.$name.'.php';
+            $file = __SHARED.$mod.'/Model/'.$type.'/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\'.$mod.'\\Model\\'.$type.'\\'.$name;
@@ -93,7 +93,7 @@ class Factory {
             return self::create($type, $name, ...$param);
         }
         else {
-            $file = __APP.'Model/'.$type.'/'.$name.'.php';
+            $file = __SHARED.'Model/'.$type.'/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\Model\\'.$type.'\\'.$name;
@@ -134,7 +134,7 @@ class Factory {
     //     if (isset($_[1])) {
     //         $mod = $_[0];
     //         $name = $_[1];
-    //         $file = __APP.$mod.'/Model/Repo/'.$name.'.php';
+    //         $file = __SHARED.$mod.'/Model/Repo/'.$name.'.php';
     //         if (is_file($file)) {
     //             include_once ($file);
     //             $class = '\\'.$mod.'\\Model\\Repo\\'.$name;
@@ -143,7 +143,7 @@ class Factory {
     //         return self::repo($name);
     //     }
     //     else {
-    //         $file = __APP.'Model/Repo/'.$name.'.php';
+    //         $file = __SHARED.'Model/Repo/'.$name.'.php';
     //         if (is_file($file)) {
     //             include_once ($file);
     //             $class = '\\Model\\Repo\\'.$name;
@@ -162,7 +162,7 @@ class Loader {
         if (isset($_[1])) {
             $mod = $_[0];
             $name = $_[1];
-            $file = __APP.$mod.'/Model/Repo/'.$name.'.php';
+            $file = __SHARED.$mod.'/Model/Repo/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\'.$mod.'\\Model\\Repo\\'.$name;
@@ -171,7 +171,7 @@ class Loader {
             return self::repo($name);
         }
         else {
-            $file = __APP.'Model/Repo/'.$name.'.php';
+            $file = __SHARED.'Model/Repo/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\Model\\Repo\\'.$name;
@@ -187,7 +187,7 @@ class Loader {
         if (isset($_[1])) {
             $mod = $_[0];
             $name = $_[1];
-            $file = __APP.$mod.'/Model/Service/'.$name.'.php';
+            $file = __SHARED.$mod.'/Model/Service/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\'.$mod.'\\Model\\Service\\'.$name;
@@ -196,7 +196,7 @@ class Loader {
             return self::service($name);
         }
         else {
-            $file = __APP.'Model/Service/'.$name.'.php';
+            $file = __SHARED.'Model/Service/'.$name.'.php';
             if (is_file($file)) {
                 include_once ($file);
                 $class = '\\Model\\Service\\'.$name;
@@ -215,7 +215,7 @@ class Loader {
     //     if (isset($_[1])) {
     //         $mod = $_[0];
     //         $name = $_[1];
-    //         $file = __APP.$mod.'/'.$type.'/'.$name.'.php';
+    //         $file = __SHARED.$mod.'/'.$type.'/'.$name.'.php';
     //         if (is_file($file)) {
     //             include_once ($file);
     //             $class = '\\'.$mod.'\\'.$type.'\\'.$name;
@@ -224,7 +224,7 @@ class Loader {
     //         return self::load($type, $name);
     //     }
     //     else {
-    //         $file = __APP.$type.'/'.$name.'.php';
+    //         $file = __SHARED.$type.'/'.$name.'.php';
     //         if (is_file($file)) {
     //             include_once ($file);
     //             $class = '\\'.$type.'\\'.$name;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Controller\Error;
+namespace site\main\Controller\Error;
 
-class Http extends \Base\Controller
+class Http extends \site\main\Base\Controller
 {
     public function error404()
     {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Admin\Controller\Product;
+namespace site\admin\Controller\Product;
+use site\admin\Base\Controller;
 
-class Index extends \Admin\Base\Controller {
+class Index extends Controller {
 
     public function index() {
         echo 'Admin San Pham';
@@ -14,8 +15,7 @@ class Index extends \Admin\Base\Controller {
     }
 
     public function update($id) {
-        $validator = $this->validator();
-        
+        // $validator = $this->validator();
         return $id;
     }
 

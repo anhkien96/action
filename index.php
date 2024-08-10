@@ -1,19 +1,20 @@
 <?php
 
 define('__ROOT', realpath(__DIR__) . '/');
-define('__SHARE', __ROOT. 'shared/');
+define('__SHARED', __ROOT. 'shared/');
 define('__SITE', __ROOT. 'site/');
 define('__SYS', __ROOT. 'system/');
 
 include(__SYS . 'Reg.php');
 include(__SYS . 'Config.php');
 include(__SYS . 'Request.php');
+include(__SYS . 'Response.php');
 include(__SYS . 'View.php');
 include(__SYS . 'Route.php');
 
 // spl_autoload_register(function($name) {
 // 	$_ = explode('\\', $name);
-// 	if (isset($_[1]) && ($file = __APP.implode('/', $_).'.php') && is_file($file)) {
+// 	if (isset($_[1]) && ($file = __SHARED.implode('/', $_).'.php') && is_file($file)) {
 // 		include($file);
 // 	}
 // 	else {
@@ -24,9 +25,8 @@ include(__SYS . 'Route.php');
 spl_autoload_register(function($name) {
 	$_ = explode('\\', $name);
 	if (isset($_[1])) {
-		if ($_[0] == 'Site') {
-			unset($_[0]);
-			$file = __SITE.implode('/', $_).'.php';
+		if ($_[0] == 'site') {
+			$file = __ROOT.implode('/', $_).'.php';
 		}
 		else {
 			$file = __SHARED.implode('/', $_).'.php';
@@ -40,9 +40,9 @@ spl_autoload_register(function($name) {
 	}
 });
 
-include(__APP . 'boot.php');
+include(__SHARED . 'boot.php');
 $route = new \Route();
-include(__APP . 'route.php');
+include(__SHARED . 'route.php');
 $route->match();
 
 // cache in repo sang một bảng tạm thời, hợp lý không? cache các mối quan hệ liên kết đén bảng khác

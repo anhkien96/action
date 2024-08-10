@@ -9,16 +9,24 @@ return [
     // 'admin_middleware' => [
     //     '\Admin\Middleware\Auth',
     // ],
-    'middleware' => [
+    'site_active' => [
+        'main' => 1,
+        'admin' => 1
+    ],
+    'site' => [
         'main' => [
-            '\Site\Main\Middleware\Logger',
+            'middleware' => [
+                '\site\main\Middleware\Logger',
+            ],
+            'error' => [
+                '404' => ['controller' => 'Error_Http', 'action' => 'error404']
+            ],
         ],
         'admin' => [
-            '\Site\Admin\Middleware\Auth',
-        ],
-    ],
-    'error' => [
-        '404' => ['controller' => 'Error_Http', 'action' => 'error404']
+            'middleware' => [
+                '\site\admin\Middleware\Auth',
+            ]
+        ]
     ],
     'lang' => [
         'default' => 'vi'

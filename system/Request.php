@@ -26,7 +26,8 @@ class Request {
     }
 
     public function setSite($site) {
-        $this->site = $site;
+        $sites = \Config::get('app.site_active');
+        $this->site = empty($sites[$site])? 'main': $site;
     }
 
     public function isApi() {

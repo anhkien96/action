@@ -11,7 +11,7 @@ class Logger {
         }
         // var_dump($req->getController());
         // var_dump($req->getAction());
-        // var_dump($req->isAdmin());
+        // var_dump($req->site());
         return $next();
     }
 }

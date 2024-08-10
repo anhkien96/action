@@ -31,7 +31,7 @@ class Action extends \Base\Repo {
     public function scanAction() {
         $res = [];
         $except = ['__construct'];
-        $controls = $this->scanControl(__APP.'Controller');
+        $controls = $this->scanControl(__SHARED.'Controller');
         foreach ($controls as $control) {
             $item = [
                 'control' => $control['control'],

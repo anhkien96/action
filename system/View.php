@@ -4,14 +4,9 @@ class View {
 
     protected $_req, $_data = [], $_path, $_layout = 'main', $_view, $_load = '';
 
-    public function __construct($is_admin = null) {
+    public function __construct() {
         $this->_req = \Reg::get('request');
-        if ($is_admin ?? $this->_req->isAdmin()) {
-            $this->_path = __APP.'Admin/View/';
-        }
-        else {
-            $this->_path = __APP.'View/';
-        }
+        $this->_path = __SITE.$this->_req->site().'/View/';
     }
 
     public function __get($name) {

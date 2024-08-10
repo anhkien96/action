@@ -53,11 +53,7 @@ class Route {
         $this->req->setAction($action);
 
         $next = [\Reg::get('response'), 'handle'];
-
-        $middles = array_reverse(\Config::get('app.middleware', []));
-        if ($this->req->isAdmin()) {
-            $middles = array_merge(array_reverse(\Config::get('app.admin_middleware', [])), $middles);
-        }
+        $middles = array_reverse(\Config::get('app.site.'.$this->req->site().'.middleware', []));
 
         foreach ($middles as $name) {
             $next = function () use ($name, $next) {
@@ -82,15 +78,11 @@ class Route {
             $this->req->setIsApi(true);
             array_shift($seg);
         }
-        // if ($seg && $seg[0] == 'admin') {
-        //     $this->req->setIsAdmin(true);
-        //     array_shift($seg);
-        // }
         if ($seg) {
             $this->req->setSite(array_shift($seg));
         }
         else {
-            $this->req->setSite('Main');
+            $this->req->setSite('main');
         }
         return $seg;
     }
@@ -137,12 +129,12 @@ class Route {
 
     public function loadApp() {
         $handle = null;
-        $is_admin = $this->req->isAdmin();
+        $site = $this->req->site();
         $_ = preg_split('/[_-]/', $this->req->getController());
-        $file = __APP.($is_admin? 'Admin/' : '').'Controller/'.implode('/', $_).'.php';
+        $file = __SITE.$site.'/Controller/'.implode('/', $_).'.php';
         if (is_file($file)) {
             include($file);
-            $class = ($is_admin? '\\Admin' : '').'\\Controller\\'.implode('\\', $_);
+            $class = '\\site\\'.$site.'\\Controller\\'.implode('\\', $_);
             $app = new $class();
             $action = $this->req->getAction();
             $handle = [$app, $action. '__' .$this->method];
@@ -159,15 +151,20 @@ class Route {
     protected function error404() {
         header('HTTP/1.1 404 Not Found');
         if (!$this->req->isApi()) {
-            $cfg = \Config::get('app.error.404');
+            $site = $this->req->site();
+            $cfg = \Config::get('app.site.'.$site.'.error.404');
+            if (!$cfg) {
+                $site = 'main';
+                $cfg = \Config::get('app.site.'.$site.'.error.404');
+            }
             $control = $cfg['controller']?? '';
             $action = $cfg['action']?? '';
             if ($control && $action) {
                 $_ = preg_split('/[_-]/', $control);
-                $file = __APP.'Controller/'.implode('/', $_).'.php';
+                $file = __SITE.$site.'/Controller/'.implode('/', $_).'.php';
                 if (is_file($file)) {
                     include($file);
-                    $class = '\\Controller\\'.implode('\\', $_);
+                    $class = '\\site\\'.$site.'\\Controller\\'.implode('\\', $_);
                     $handle = [new $class(), $cfg['action']];
                     if (is_callable($handle)) {
                         return $handle($this->req);
